@@ -49,12 +49,12 @@ class Utility
 
     /**
      * @param $provider string|RandomDriverInterface
+     *
      * @throws InvalidProviderException
      */
-    public function __construct($provider)
+    public function __construct(RandomDriverInterface|string $provider)
     {
-        if (is_object($provider) && $provider instanceof RandomDriverInterface ||
-            class_exists($provider) && ($provider = new $provider) instanceof RandomDriverInterface) {
+        if ($provider instanceof RandomDriverInterface || class_exists($provider) && ($provider = new $provider) instanceof RandomDriverInterface) {
             $this->driver = $provider;
         } else {
             throw new InvalidProviderException('You must provide a valid RandomDriver');
@@ -166,7 +166,7 @@ class Utility
     }
 
     /**
-     * How many collisions occured creating values in this instance
+     * How many collisions occurred creating values in this instance
      *
      * @return int
      */

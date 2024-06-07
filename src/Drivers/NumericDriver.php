@@ -5,49 +5,22 @@ namespace Myerscode\Utilities\Random\Drivers;
 
 class NumericDriver extends AbstractDriver implements RandomDriverInterface
 {
-
-    public function __construct()
-    {
-        $this->seed();
-    }
-
-    /**
-     * Seed the driver
-     */
     public function seed(): void
     {
         $ranges = [
-            implode('', $this->shuffle(range(0, 9))),
-            implode('', $this->shuffle(range(0, 9))),
-            implode('', $this->shuffle(range(0, 9))),
-            implode('', $this->shuffle(range(0, 9))),
-            implode('', $this->shuffle(range(0, 9))),
+            implode('', $this->shuffleArray(range(0, 9))),
+            implode('', $this->shuffleArray(range(0, 9))),
+            implode('', $this->shuffleArray(range(0, 9))),
+            implode('', $this->shuffleArray(range(0, 9))),
+            implode('', $this->shuffleArray(range(0, 9))),
         ];
 
-        $this->digest = str_shuffle(implode('', $ranges));
-        var_dump($this->digest);
+        $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
+
         for ($i = -0; $i < $this->iterations; $i++) {
-            $this->digest = str_shuffle($this->digest);
-        }
-    }
-
-    private function shuffle($array): array
-    {
-        $result = [];
-
-        $keys = array_keys($array);
-
-        for ($count = count($array); $count > 0; $count--) {
-
-            $index = random_int(0, $count - 1);
-
-            $result[$keys[$index]] = $array[$keys[$index]];
-
-            if ($index < $count - 1) {
-                $keys[$index] = $keys[$count - 1];
-            }
+            $seed = $this->shuffleString($seed);
         }
 
-        return $result;
+        $this->digest = $seed;
     }
 }

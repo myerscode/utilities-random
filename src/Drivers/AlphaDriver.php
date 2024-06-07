@@ -3,17 +3,14 @@
 namespace Myerscode\Utilities\Random\Drivers;
 
 
-class AlphaNumericDriver extends AbstractDriver implements RandomDriverInterface
+class AlphaDriver extends AbstractDriver implements RandomDriverInterface
 {
     public function seed(): void
     {
         $ranges = [
             implode('', $this->shuffleArray(range('a', 'z'))),
             implode('', $this->shuffleArray(range('A', 'Z'))),
-            implode('', $this->shuffleArray(range(0, 9))),
         ];
-
-        $ranges = $this->shuffleArray($ranges);
 
         $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
 
@@ -23,5 +20,4 @@ class AlphaNumericDriver extends AbstractDriver implements RandomDriverInterface
 
         $this->digest = $seed;
     }
-
 }

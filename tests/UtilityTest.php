@@ -3,8 +3,8 @@
 namespace Tests;
 
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
+use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
 use Myerscode\Utilities\Random\Utility;
-use Tests\Support\BaseTestSuite;
 
 class UtilityTest extends BaseTestSuite
 {
@@ -17,9 +17,10 @@ class UtilityTest extends BaseTestSuite
     }
 
     /**
-     * Test a value is appended to the string
-     *
      * @param  string  $driver
+     *
+     * @return void
+     * @throws InvalidProviderException
      *
      * @dataProvider dataProvider
      */
