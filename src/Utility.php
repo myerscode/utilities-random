@@ -13,38 +13,38 @@ class Utility
     /**
      * @var RandomDriverInterface
      */
-    private $driver;
+    private RandomDriverInterface $driver;
 
     /**
      * @var Generator
      */
-    private $generator;
+    private Generator $generator;
 
     /**
      * Generated codes in this instance
      *
      * @var array
      */
-    private $generated = [];
+    private array $generated = [];
 
     /**
      * How many times this generator created a random the same
      * @var int
      */
-    private $collisions = 0;
+    private int $collisions = 0;
 
     /**
      * How many times should unique try to generate a code before it gives up
-     * This variable stops it getting stuck in a infinite loop when comparing against generated codes
+     * This variable stops it's getting stuck in an infinite loop when comparing against generated codes
      * @var int
      */
-    private $uniqueCollisionThreshold = 10;
+    private int $uniqueCollisionThreshold = 10;
 
-    private $chunks = 0;
+    private int $chunks = 0;
 
-    private $length = 5;
+    private int $length = 5;
 
-    private $spacer = '-';
+    private string $spacer = '-';
 
 
     /**
@@ -160,7 +160,7 @@ class Utility
 
     }
 
-    private function make()
+    private function make(): string
     {
         return $this->generator->make($this->length, $this->chunks, $this->spacer);
     }
@@ -188,7 +188,7 @@ class Utility
         return $this;
     }
 
-    public function permutations()
+    public function permutations(): int
     {
         return pow(strlen($this->driver->digest()), $this->length);
     }
