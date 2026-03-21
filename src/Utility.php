@@ -10,33 +10,26 @@ use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 class Utility
 {
 
-    /**
-     * @var RandomDriverInterface
-     */
     private RandomDriverInterface $driver;
 
     /**
      * @var Generator
      */
-    private Generator $generator;
+    private readonly Generator $generator;
 
     /**
      * Generated codes in this instance
-     *
-     * @var array
      */
     private array $generated = [];
 
     /**
      * How many times this generator created a random the same
-     * @var int
      */
     private int $collisions = 0;
 
     /**
      * How many times should unique try to generate a code before it gives up
      * This variable stops it's getting stuck in an infinite loop when comparing against generated codes
-     * @var int
      */
     private int $uniqueCollisionThreshold = 10;
 
@@ -73,9 +66,6 @@ class Utility
 
     /**
      * Create the random value in chunks
-     *
-     * @param int $chunks
-     * @return Utility
      */
     public function chunks(int $chunks): Utility
     {
@@ -86,9 +76,6 @@ class Utility
 
     /**
      * How long should the random value be
-     *
-     * @param int $length
-     * @return Utility
      */
     public function length(int $length): Utility
     {
@@ -99,9 +86,6 @@ class Utility
 
     /**
      * Set a spacer value for multiple chunks
-     *
-     * @param string $spacer
-     * @return Utility
      */
     public function spacer(string $spacer): Utility
     {
@@ -112,8 +96,6 @@ class Utility
 
     /**
      * Generate a random value
-     *
-     * @return string
      */
     public function generate(): string
     {
@@ -127,7 +109,6 @@ class Utility
     /**
      * Generate a value not created with this instance
      *
-     * @return string
      * @throws UniqueThresholdReachedException
      */
     public function unique(): string
@@ -153,10 +134,9 @@ class Utility
 
         if ($iterations >= $this->uniqueCollisionThreshold) {
             throw new UniqueThresholdReachedException(sprintf("Maximum attempts (%s) at creating a new unique value reached", $this->uniqueCollisionThreshold));
-        } else {
-            $this->generated[] = $random;
-            return $random;
         }
+        $this->generated[] = $random;
+        return $random;
 
     }
 
@@ -167,8 +147,6 @@ class Utility
 
     /**
      * How many collisions occurred creating values in this instance
-     *
-     * @return int
      */
     public function collisions(): int
     {
@@ -177,8 +155,6 @@ class Utility
 
     /**
      * Reset the utility instance, keeping the current seeder digest
-     *
-     * @return Utility
      */
     public function reset(): Utility
     {
@@ -190,6 +166,6 @@ class Utility
 
     public function permutations(): int
     {
-        return pow(strlen($this->driver->digest()), $this->length);
+        return strlen($this->driver->digest()) ** $this->length;
     }
 }

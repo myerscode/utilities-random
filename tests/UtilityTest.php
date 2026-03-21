@@ -17,14 +17,12 @@ class UtilityTest extends BaseTestSuite
     }
 
     /**
-     * @param  string  $driver
      *
-     * @return void
      * @throws InvalidProviderException
      *
      * @dataProvider dataProvider
      */
-    public function testConstructor(string $driver)
+    public function testConstructor(string $driver): void
     {
         $this->assertInstanceOf(Utility::class, $this->utility($driver));
     }

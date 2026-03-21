@@ -2,7 +2,9 @@
 
 namespace Myerscode\Utilities\Random\Exceptions;
 
-class InvalidProviderException extends \Exception
+use Exception;
+
+class InvalidProviderException extends Exception
 {
 
 }

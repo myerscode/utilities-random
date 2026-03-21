@@ -14,7 +14,6 @@ abstract class BaseTestSuite extends TestCase
      *
      * @param $config
      *
-     * @return Utility
      * @throws InvalidProviderException
      */
     public function utility($config): Utility

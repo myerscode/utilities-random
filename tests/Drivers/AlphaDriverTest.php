@@ -14,7 +14,7 @@ class AlphaDriverTest extends BaseTestSuite
         $this->driver = new AlphaDriver();
     }
 
-    public function testSeedGeneration()
+    public function testSeedGeneration(): void
     {
         $seed = $this->driver->digest();
         $this->assertMatchesRegularExpression('/^[a-zA-Z]*$/', $seed);

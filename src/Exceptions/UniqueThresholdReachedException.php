@@ -2,7 +2,9 @@
 
 namespace Myerscode\Utilities\Random\Exceptions;
 
-class UniqueThresholdReachedException extends \Exception
+use Exception;
+
+class UniqueThresholdReachedException extends Exception
 {
 
 }

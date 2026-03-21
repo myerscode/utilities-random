@@ -5,14 +5,8 @@ use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 
 class Generator
 {
-    /**
-     * @var string
-     */
     private string $pool;
 
-    /**
-     * @var int
-     */
     private int $poolLength;
 
     public function __construct(protected readonly RandomDriverInterface $driver)
@@ -31,13 +25,6 @@ class Generator
         return $this->pool;
     }
 
-    /**
-     * @param  int  $chunkLength
-     * @param  int  $numChunks
-     * @param  string  $spacer
-     *
-     * @return string
-     */
     public function make(int $chunkLength = 4, int $numChunks = 1, string $spacer = ''): string
     {
         if ($chunkLength < 1) {
@@ -51,14 +38,12 @@ class Generator
         }
 
         $new_serial_chunks = [];
-
-        $new_serial = null;
         
         for ($x = 0; $x < $numChunks; $x++) {
             $new_serial_chunk = '';
 
             for ($y = 0; $y < $chunkLength; $y++) {
-                $new_serial_chunk .= $this->pool[rand(0, $this->poolLength - 1)];
+                $new_serial_chunk .= $this->pool[random_int(0, $this->poolLength - 1)];
             }
 
             $new_serial_chunks[] = $new_serial_chunk;

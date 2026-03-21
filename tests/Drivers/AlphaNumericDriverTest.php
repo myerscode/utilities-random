@@ -14,7 +14,7 @@ class AlphaNumericDriverTest extends BaseTestSuite
         $this->driver = new AlphaNumericDriver();
     }
 
-    public function testSeedGeneration()
+    public function testSeedGeneration(): void
     {
         $seed = $this->driver->digest();
         $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]*$/', $seed);

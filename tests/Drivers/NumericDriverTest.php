@@ -14,9 +14,9 @@ class NumericDriverTest extends BaseTestSuite
         $this->driver = new NumericDriver();
     }
 
-    public function testSeedGeneration()
+    public function testSeedGeneration(): void
     {
         $seed = $this->driver->digest();
-        $this->assertMatchesRegularExpression('/^[0-9]*$/', $seed);
+        $this->assertMatchesRegularExpression('/^\d*$/', $seed);
     }
 }

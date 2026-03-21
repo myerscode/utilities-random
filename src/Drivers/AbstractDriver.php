@@ -14,14 +14,8 @@ use Random\RandomException;
 abstract class AbstractDriver
 {
 
-    /**
-     * @var int
-     */
     protected int $iterations = 5000;
 
-    /**
-     * @var string
-     */
     protected string $digest;
 
 
@@ -32,14 +26,9 @@ abstract class AbstractDriver
 
     /**
      * Seed the digest used for creating the random result
-     *
-     * @return void
      */
     abstract public function seed(): void;
 
-    /**
-     * @return string
-     */
     public function digest(): string
     {
         return $this->digest;

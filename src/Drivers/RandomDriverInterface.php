@@ -13,8 +13,6 @@ interface RandomDriverInterface
 
     /**
      * Get the random digest pool
-     *
-     * @return string
      */
     public function digest(): string;
 }
