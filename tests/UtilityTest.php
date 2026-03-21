@@ -7,7 +7,6 @@ namespace Tests;
 use Myerscode\Utilities\Random\Drivers\AlphaDriver;
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
 use Myerscode\Utilities\Random\Drivers\NumericDriver;
-use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
 use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 use Myerscode\Utilities\Random\Utility;
