@@ -28,7 +28,6 @@
     "php": "^8.5"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.4",
     "phpunit/phpunit": "^13.0",
     "rector/rector": "^2.3"
   },
@@ -44,7 +43,10 @@
   },
   "scripts": {
     "tests": "vendor/bin/phpunit --testdox --no-coverage --colors=always",
-    "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --colors=always",
-    "lint-fix": "vendor/bin/php-cs-fixer fix"
+    "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --colors=always"
+  },
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist"
   }
 }
