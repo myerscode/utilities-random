@@ -5,10 +5,10 @@ namespace Tests;
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
 use Myerscode\Utilities\Random\Utility;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UtilityTest extends BaseTestSuite
 {
-
     public static function dataProvider(): array
     {
         return [
@@ -17,11 +17,9 @@ class UtilityTest extends BaseTestSuite
     }
 
     /**
-     *
      * @throws InvalidProviderException
-     *
-     * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testConstructor(string $driver): void
     {
         $this->assertInstanceOf(Utility::class, $this->utility($driver));
