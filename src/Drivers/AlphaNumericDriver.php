@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Myerscode\Utilities\Random\Drivers;
 
 class AlphaNumericDriver extends AbstractDriver implements RandomDriverInterface
@@ -22,5 +24,4 @@ class AlphaNumericDriver extends AbstractDriver implements RandomDriverInterface
 
         $this->digest = $seed;
     }
-
 }

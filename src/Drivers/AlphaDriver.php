@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Myerscode\Utilities\Random\Drivers;
 
 class AlphaDriver extends AbstractDriver implements RandomDriverInterface

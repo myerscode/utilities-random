@@ -1,25 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Myerscode\Utilities\Random\Drivers;
 
 use Random\RandomException;
 
 abstract class AbstractDriver
 {
-
     protected int $iterations = 5000;
 
     protected string $digest;
-
 
     public function __construct()
     {
         $this->seed();
     }
 
-    /**
-     * Seed the digest used for creating the random result
-     */
     abstract public function seed(): void;
 
     public function digest(): string
@@ -33,13 +30,10 @@ abstract class AbstractDriver
     protected function shuffleArray(array $array): array
     {
         $result = [];
-
         $keys = array_keys($array);
 
         for ($count = count($array); $count > 0; $count--) {
-
             $index = random_int(0, $count - 1);
-
             $result[$keys[$index]] = $array[$keys[$index]];
 
             if ($index < $count - 1) {

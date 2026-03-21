@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Myerscode\Utilities\Random;
+
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 
 class Generator
@@ -27,28 +30,25 @@ class Generator
 
     public function make(int $chunkLength = 4, int $numChunks = 1, string $spacer = ''): string
     {
-        if ($chunkLength < 1) {
-            $chunkLength = 1;
-        }
+        $chunkLength = max(1, $chunkLength);
 
-        // if 0 chunks you are just creating 1 string, so its really 1 chunk
         if ($numChunks <= 1) {
             $numChunks = 1;
             $spacer = '';
         }
 
-        $new_serial_chunks = [];
-        
+        $chunks = [];
+
         for ($x = 0; $x < $numChunks; $x++) {
-            $new_serial_chunk = '';
+            $chunk = '';
 
             for ($y = 0; $y < $chunkLength; $y++) {
-                $new_serial_chunk .= $this->pool[random_int(0, $this->poolLength - 1)];
+                $chunk .= $this->pool[random_int(0, $this->poolLength - 1)];
             }
 
-            $new_serial_chunks[] = $new_serial_chunk;
+            $chunks[] = $chunk;
         }
 
-        return implode($spacer, $new_serial_chunks);
+        return implode($spacer, $chunks);
     }
 }
