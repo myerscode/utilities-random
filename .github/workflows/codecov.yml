@@ -1,40 +1,33 @@
 name: Code Coverage
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  run:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        php-versions: [ '8.3' ]
+  coverage:
+    runs-on: ubuntu-latest
 
-    name: PHP ${{ matrix.php-versions }} - ${{ matrix.os }}
+    name: Coverage
+
     steps:
-
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: '8.5'
           coverage: xdebug
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Run Test Suite
-        run: vendor/bin/phpunit --testdox --coverage-clover ./coverage.xml
+      - name: Run tests with coverage
+        run: vendor/bin/phpunit --coverage-clover ./coverage.xml
 
-      - name: Code Coverage
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
-          verbose: true
