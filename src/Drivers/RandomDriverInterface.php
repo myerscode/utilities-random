@@ -2,7 +2,6 @@
 
 namespace Myerscode\Utilities\Random\Drivers;
 
-
 interface RandomDriverInterface
 {
 

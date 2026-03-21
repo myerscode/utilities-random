@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Fred
- * Date: 21/03/2018
- * Time: 21:15
- */
 
 namespace Myerscode\Utilities\Random\Drivers;
-
 
 use Random\RandomException;
 

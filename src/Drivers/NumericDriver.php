@@ -2,7 +2,6 @@
 
 namespace Myerscode\Utilities\Random\Drivers;
 
-
 class NumericDriver extends AbstractDriver implements RandomDriverInterface
 {
     public function seed(): void
@@ -17,7 +16,7 @@ class NumericDriver extends AbstractDriver implements RandomDriverInterface
 
         $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
 
-        for ($i = -0; $i < $this->iterations; $i++) {
+        for ($i = 0; $i < $this->iterations; $i++) {
             $seed = $this->shuffleString($seed);
         }
 

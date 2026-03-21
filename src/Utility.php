@@ -135,6 +135,7 @@ class Utility
         if ($iterations >= $this->uniqueCollisionThreshold) {
             throw new UniqueThresholdReachedException(sprintf("Maximum attempts (%s) at creating a new unique value reached", $this->uniqueCollisionThreshold));
         }
+
         $this->generated[] = $random;
         return $random;
 
