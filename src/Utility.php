@@ -99,7 +99,7 @@ class Utility
         }
 
         throw new UniqueThresholdReachedException(
-            sprintf('Maximum attempts (%s) at creating a new unique value reached', $this->uniqueCollisionThreshold)
+            sprintf('Maximum attempts (%s) at creating a new unique value reached', $this->uniqueCollisionThreshold),
         );
     }
 

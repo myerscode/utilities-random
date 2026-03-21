@@ -28,6 +28,7 @@
     "php": "^8.5"
   },
   "require-dev": {
+    "laravel/pint": "^1.29",
     "phpunit/phpunit": "^13.0",
     "rector/rector": "^2.3"
   },
@@ -42,6 +43,8 @@
     }
   },
   "scripts": {
+    "lint": "vendor/bin/pint --test",
+    "lint-fix": "vendor/bin/pint",
     "tests": "vendor/bin/phpunit --testdox --no-coverage --colors=always",
     "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --colors=always"
   },

@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 abstract class BaseTestSuite extends TestCase
 {
-
     /**
      * Get the utility being tested
      *
