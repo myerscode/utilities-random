@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Drivers;
 
 use Myerscode\Utilities\Random\Drivers\NumericDriver;
@@ -14,9 +16,25 @@ class NumericDriverTest extends BaseTestSuite
         $this->driver = new NumericDriver();
     }
 
-    public function testSeedGeneration(): void
+    public function testDigestContainsOnlyNumericCharacters(): void
     {
         $seed = $this->driver->digest();
-        $this->assertMatchesRegularExpression('/^\d*$/', $seed);
+        $this->assertMatchesRegularExpression('/^\d+$/', $seed);
+    }
+
+    public function testDigestContainsExpectedLength(): void
+    {
+        $digest = $this->driver->digest();
+        $this->assertSame(50, strlen($digest));
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->driver->digest();
+        $this->driver->seed();
+        $second = $this->driver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^\d+$/', $second);
     }
 }
