@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class UtilityTest extends BaseTestSuite
 {
+    /** @return array<int, array{string}> */
     public static function dataProvider(): array
     {
         return [

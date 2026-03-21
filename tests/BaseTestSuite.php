@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
@@ -9,13 +11,9 @@ use PHPUnit\Framework\TestCase;
 abstract class BaseTestSuite extends TestCase
 {
     /**
-     * Get the utility being tested
-     *
-     * @param $config
-     *
      * @throws InvalidProviderException
      */
-    public function utility($config): Utility
+    public function utility(string $config): Utility
     {
         return new Utility($config);
     }

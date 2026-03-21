@@ -14,6 +14,7 @@ class Utility
 
     private readonly Generator $generator;
 
+    /** @var array<int, string> */
     private array $generated = [];
 
     private int $collisions = 0;

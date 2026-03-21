@@ -9,11 +9,11 @@ class NumericDriver extends AbstractDriver implements RandomDriverInterface
     public function seed(): void
     {
         $ranges = [
-            implode('', $this->shuffleArray(range(0, 9))),
-            implode('', $this->shuffleArray(range(0, 9))),
-            implode('', $this->shuffleArray(range(0, 9))),
-            implode('', $this->shuffleArray(range(0, 9))),
-            implode('', $this->shuffleArray(range(0, 9))),
+            implode('', array_map(strval(...), $this->shuffleArray(range(0, 9)))),
+            implode('', array_map(strval(...), $this->shuffleArray(range(0, 9)))),
+            implode('', array_map(strval(...), $this->shuffleArray(range(0, 9)))),
+            implode('', array_map(strval(...), $this->shuffleArray(range(0, 9)))),
+            implode('', array_map(strval(...), $this->shuffleArray(range(0, 9)))),
         ];
 
         $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));

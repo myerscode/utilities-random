@@ -25,6 +25,9 @@ abstract class AbstractDriver
     }
 
     /**
+     * @param  array<int|string, int|string>  $array
+     * @return array<int, string>
+     *
      * @throws RandomException
      */
     protected function shuffleArray(array $array): array
@@ -41,7 +44,7 @@ abstract class AbstractDriver
             }
         }
 
-        return str_split(strrev(str_shuffle(implode('', $result))));
+        return str_split(strrev(str_shuffle(implode('', array_map(strval(...), $result)))));
     }
 
     protected function shuffleString(string $string): string
