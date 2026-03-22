@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Myerscode\Utilities\Random\Rules;
+namespace Myerscode\Utilities\Random\Constraints\Output;
+
+use Myerscode\Utilities\Random\Constraints\OutputConstraint;
 
 /**
  * Rejects strings containing sequential character runs (e.g. abc, 123, CBA, 321).
  */
-class NoSequentialCharacters implements ValidationRule
+class NoSequentialCharacters implements OutputConstraint
 {
     public function __construct(private readonly int $length = 3) {}
 

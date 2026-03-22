@@ -41,16 +41,16 @@ $second = $utility->length(10)->unique(); // guaranteed different from $first
 
 Throws `UniqueThresholdReachedException` if it can't produce a unique value after 10 attempts.
 
-## Applying Rules
+## Applying Constraints
 
-Constrain generation with [rules](rules.md):
+Constrain generation with [constraints](constraints.md):
 
 ```php
-use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
-use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
+use Myerscode\Utilities\Random\Constraints\Pool\ExcludeSimilarCharacters;
+use Myerscode\Utilities\Random\Constraints\Output\NoRepeatingCharacters;
 
 $random = $utility
-    ->rules([ExcludeSimilarCharacters::class, NoRepeatingCharacters::class])
+    ->constraints([ExcludeSimilarCharacters::class, NoRepeatingCharacters::class])
     ->length(10)
     ->generate();
 ```

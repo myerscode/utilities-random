@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Myerscode\Utilities\Random;
 
+use Myerscode\Utilities\Random\Constraints\ConstraintInterface;
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
+use Myerscode\Utilities\Random\Exceptions\InvalidConstraintException;
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
-use Myerscode\Utilities\Random\Exceptions\InvalidRuleException;
 use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
-use Myerscode\Utilities\Random\Rules\RuleInterface;
 
 class Utility
 {
@@ -51,35 +51,35 @@ class Utility
     }
 
     /**
-     * Apply rules to the generator. Accepts class names or instances.
+     * Apply constraints to the generator. Accepts class names or instances.
      *
-     * @param  array<int, RuleInterface|string>  $rules
+     * @param  array<int, ConstraintInterface|string>  $constraints
      *
-     * @throws InvalidRuleException
+     * @throws InvalidConstraintException
      */
-    public function rules(array $rules): static
+    public function constraints(array $constraints): static
     {
         $resolved = [];
 
-        foreach ($rules as $rule) {
-            if (is_string($rule)) {
-                if (!class_exists($rule)) {
-                    throw new InvalidRuleException(sprintf('Rule class [%s] does not exist', $rule));
+        foreach ($constraints as $constraint) {
+            if (is_string($constraint)) {
+                if (!class_exists($constraint)) {
+                    throw new InvalidConstraintException(sprintf('Constraint class [%s] does not exist', $constraint));
                 }
 
-                $instance = new $rule();
+                $instance = new $constraint();
 
-                if (!$instance instanceof RuleInterface) {
-                    throw new InvalidRuleException(sprintf('Rule [%s] must implement RuleInterface', $rule));
+                if (!$instance instanceof ConstraintInterface) {
+                    throw new InvalidConstraintException(sprintf('Constraint [%s] must implement ConstraintInterface', $constraint));
                 }
 
                 $resolved[] = $instance;
             } else {
-                $resolved[] = $rule;
+                $resolved[] = $constraint;
             }
         }
 
-        $this->generator->setRules($resolved);
+        $this->generator->setConstraints($resolved);
 
         return $this;
     }

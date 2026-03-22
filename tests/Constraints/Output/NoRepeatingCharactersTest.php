@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
+use Myerscode\Utilities\Random\Constraints\Output\NoRepeatingCharacters;
 use Tests\BaseTestSuite;
 
 class NoRepeatingCharactersTest extends BaseTestSuite

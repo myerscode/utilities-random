@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\MustContainDigit;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainDigit;
 use Tests\BaseTestSuite;
 
 class MustContainDigitTest extends BaseTestSuite

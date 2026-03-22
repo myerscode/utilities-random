@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\MustContainDigit;
-use Myerscode\Utilities\Random\Rules\MustContainLetter;
-use Myerscode\Utilities\Random\Rules\MustContainUppercase;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainDigit;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainLetter;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainUppercase;
 use Tests\BaseTestSuite;
 
 class MustContainPatternTest extends BaseTestSuite

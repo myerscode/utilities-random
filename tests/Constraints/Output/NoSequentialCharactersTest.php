@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\NoSequentialCharacters;
+use Myerscode\Utilities\Random\Constraints\Output\NoSequentialCharacters;
 use Tests\BaseTestSuite;
 
 class NoSequentialCharactersTest extends BaseTestSuite

@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Myerscode\Utilities\Random\Rules;
+namespace Myerscode\Utilities\Random\Constraints\Pool;
+
+use Myerscode\Utilities\Random\Constraints\PoolConstraint;
 
 /**
  * Removes a configurable set of characters from the pool.
  */
-class ExcludeCharacters implements PoolRule
+class ExcludeCharacters implements PoolConstraint
 {
     /** @var array<int, string> */
     private array $excluded;

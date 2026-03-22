@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Pool;
 
-use Myerscode\Utilities\Random\Rules\ExcludeCharacters;
+use Myerscode\Utilities\Random\Constraints\Pool\ExcludeCharacters;
 use Tests\BaseTestSuite;
 
 class ExcludeCharactersTest extends BaseTestSuite

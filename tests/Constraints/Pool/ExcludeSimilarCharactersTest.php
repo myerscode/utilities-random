@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Pool;
 
-use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
+use Myerscode\Utilities\Random\Constraints\Pool\ExcludeSimilarCharacters;
 use Tests\BaseTestSuite;
 
 class ExcludeSimilarCharactersTest extends BaseTestSuite

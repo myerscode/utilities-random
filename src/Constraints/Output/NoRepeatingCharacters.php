@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Myerscode\Utilities\Random\Rules;
+namespace Myerscode\Utilities\Random\Constraints\Output;
+
+use Myerscode\Utilities\Random\Constraints\OutputConstraint;
 
 /**
  * Rejects any generated string that contains consecutive repeating characters.
  */
-class NoRepeatingCharacters implements ValidationRule
+class NoRepeatingCharacters implements OutputConstraint
 {
     public function passes(string $value): bool
     {

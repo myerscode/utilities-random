@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Myerscode\Utilities\Random\Rules;
+namespace Myerscode\Utilities\Random\Constraints\Output;
+
+use Myerscode\Utilities\Random\Constraints\OutputConstraint;
 
 /**
  * Validates the generated string against a user-provided regex pattern.
  */
-class RegexRule implements ValidationRule
+class RegexConstraint implements OutputConstraint
 {
     public function __construct(private readonly string $pattern) {}
 

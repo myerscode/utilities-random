@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Myerscode\Utilities\Random\Rules;
+namespace Myerscode\Utilities\Random\Constraints;
 
 /**
- * Base class for rules that require a minimum number of characters matching a regex pattern.
+ * Base class for constraints that require a minimum number of characters matching a regex pattern.
  */
-abstract class MustContainPattern implements ValidationRule
+abstract class MustContainPattern implements OutputConstraint
 {
     public function __construct(private readonly int $minimum = 1) {}
 
     /**
      * The regex pattern that characters must match.
-     * Concrete rules define this to specify what they're looking for
+     * Concrete constraints define this to specify what they're looking for
      * (e.g. '/\d/' for digits, '/[A-Z]/' for uppercase).
      */
     abstract protected function pattern(): string;
@@ -29,7 +29,7 @@ abstract class MustContainPattern implements ValidationRule
 
     /**
      * Check the pool contains at least one character matching the pattern.
-     * If the pool has no matching characters, this rule can never pass
+     * If the pool has no matching characters, this constraint can never pass
      * regardless of how many times we retry generation.
      */
     public function canBeSatisfiedBy(string $pool, int $length): bool

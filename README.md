@@ -43,7 +43,7 @@ $unique = $utility->length(10)->unique();
 
 - [Usage](docs/usage.md) — full API reference and usage examples
 - [Drivers](docs/drivers.md) — built-in drivers and creating custom ones
-- [Rules](docs/rules.md) — constraining generation with pool filters and validation rules
+- [Constraints](docs/constraints.md) — constraining generation with pool filters and output constraints
 
 ## License
 

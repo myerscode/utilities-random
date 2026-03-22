@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Myerscode\Utilities\Random\Constraints\Output\NoRepeatingCharacters;
+use Myerscode\Utilities\Random\Constraints\Pool\ExcludeSimilarCharacters;
 use Myerscode\Utilities\Random\Drivers\AlphaDriver;
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
 use Myerscode\Utilities\Random\Drivers\NumericDriver;
+use Myerscode\Utilities\Random\Exceptions\InvalidConstraintException;
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
-use Myerscode\Utilities\Random\Exceptions\InvalidRuleException;
 use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
-use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
-use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
 use Myerscode\Utilities\Random\Utility;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -172,57 +172,57 @@ class UtilityTest extends BaseTestSuite
         $this->assertSame($expected, strlen($result));
     }
 
-    public function testRulesAcceptsClassNames(): void
+    public function testConstraintsAcceptsClassNames(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $result = $utility->rules([ExcludeSimilarCharacters::class]);
+        $result = $utility->constraints([ExcludeSimilarCharacters::class]);
         $this->assertInstanceOf(Utility::class, $result);
     }
 
-    public function testRulesAcceptsInstances(): void
+    public function testConstraintsAcceptsInstances(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $result = $utility->rules([new NoRepeatingCharacters()]);
+        $result = $utility->constraints([new NoRepeatingCharacters()]);
         $this->assertInstanceOf(Utility::class, $result);
     }
 
-    public function testRulesAcceptsMixedClassNamesAndInstances(): void
+    public function testConstraintsAcceptsMixedClassNamesAndInstances(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $result = $utility->rules([
+        $result = $utility->constraints([
             ExcludeSimilarCharacters::class,
             new NoRepeatingCharacters(),
         ]);
         $this->assertInstanceOf(Utility::class, $result);
     }
 
-    public function testRulesThrowsForNonExistentClass(): void
+    public function testConstraintsThrowsForNonExistentClass(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $this->expectException(InvalidRuleException::class);
-        $utility->rules(['NonExistentRuleClass']);
+        $this->expectException(InvalidConstraintException::class);
+        $utility->constraints(['NonExistentConstraintClass']);
     }
 
-    public function testRulesThrowsForNonRuleClass(): void
+    public function testConstraintsThrowsForNonConstraintClass(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $this->expectException(InvalidRuleException::class);
-        $utility->rules([\stdClass::class]);
+        $this->expectException(InvalidConstraintException::class);
+        $utility->constraints([\stdClass::class]);
     }
 
-    public function testGenerateWithExcludeSimilarCharactersRule(): void
+    public function testGenerateWithExcludeSimilarCharactersConstraint(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $utility->rules([ExcludeSimilarCharacters::class])->length(50);
+        $utility->constraints([ExcludeSimilarCharacters::class])->length(50);
 
         $result = $utility->generate();
         $this->assertDoesNotMatchRegularExpression('/[oO0I1l]/', $result);
     }
 
-    public function testGenerateWithNoRepeatingCharactersRule(): void
+    public function testGenerateWithNoRepeatingCharactersConstraint(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $utility->rules([NoRepeatingCharacters::class])->length(10);
+        $utility->constraints([NoRepeatingCharacters::class])->length(10);
 
         for ($i = 0; $i < 10; $i++) {
             $result = $utility->generate();
@@ -233,10 +233,10 @@ class UtilityTest extends BaseTestSuite
         }
     }
 
-    public function testGenerateWithCombinedRules(): void
+    public function testGenerateWithCombinedConstraints(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $utility->rules([
+        $utility->constraints([
             ExcludeSimilarCharacters::class,
             NoRepeatingCharacters::class,
         ])->length(10);
@@ -249,10 +249,10 @@ class UtilityTest extends BaseTestSuite
         }
     }
 
-    public function testRulesReturnsSelfForFluentChaining(): void
+    public function testConstraintsReturnsSelfForFluentChaining(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
-        $result = $utility->length(10)->rules([NoRepeatingCharacters::class])->chunks(2)->spacer('-');
+        $result = $utility->length(10)->constraints([NoRepeatingCharacters::class])->chunks(2)->spacer('-');
         $this->assertInstanceOf(Utility::class, $result);
     }
 }

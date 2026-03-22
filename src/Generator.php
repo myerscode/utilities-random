@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Myerscode\Utilities\Random;
 
+use Myerscode\Utilities\Random\Constraints\ConstraintInterface;
+use Myerscode\Utilities\Random\Constraints\OutputConstraint;
+use Myerscode\Utilities\Random\Constraints\PoolConstraint;
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
-use Myerscode\Utilities\Random\Exceptions\UnsatisfiableRuleException;
+use Myerscode\Utilities\Random\Exceptions\UnsatisfiableConstraintException;
 use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
-use Myerscode\Utilities\Random\Rules\PoolRule;
-use Myerscode\Utilities\Random\Rules\RuleInterface;
-use Myerscode\Utilities\Random\Rules\ValidationRule;
 
 class Generator
 {
@@ -18,11 +18,11 @@ class Generator
 
     private int $poolLength;
 
-    /** @var array<int, PoolRule> */
-    private array $poolRules = [];
+    /** @var array<int, PoolConstraint> */
+    private array $poolConstraints = [];
 
-    /** @var array<int, ValidationRule> */
-    private array $validationRules = [];
+    /** @var array<int, OutputConstraint> */
+    private array $outputConstraints = [];
 
     private int $validationAttempts = 100;
 
@@ -36,12 +36,12 @@ class Generator
      */
     public function setPool(string $pool): void
     {
-        $this->pool = $this->applyPoolRules($pool);
+        $this->pool = $this->applyPoolConstraints($pool);
         $this->poolLength = strlen($this->pool);
 
         if ($this->poolLength === 0) {
             throw new EmptyPoolException(
-                'The character pool is empty after applying pool rules. Check your driver and rule combination.',
+                'The character pool is empty after applying pool constraints. Check your driver and constraint combination.',
             );
         }
     }
@@ -52,22 +52,22 @@ class Generator
     }
 
     /**
-     * @param  array<int, RuleInterface>  $rules
+     * @param  array<int, ConstraintInterface>  $constraints
      *
      * @throws EmptyPoolException
      */
-    public function setRules(array $rules): void
+    public function setConstraints(array $constraints): void
     {
-        $this->poolRules = [];
-        $this->validationRules = [];
+        $this->poolConstraints = [];
+        $this->outputConstraints = [];
 
-        foreach ($rules as $rule) {
-            if ($rule instanceof PoolRule) {
-                $this->poolRules[] = $rule;
+        foreach ($constraints as $constraint) {
+            if ($constraint instanceof PoolConstraint) {
+                $this->poolConstraints[] = $constraint;
             }
 
-            if ($rule instanceof ValidationRule) {
-                $this->validationRules[] = $rule;
+            if ($constraint instanceof OutputConstraint) {
+                $this->outputConstraints[] = $constraint;
             }
         }
 
@@ -75,16 +75,16 @@ class Generator
     }
 
     /**
-     * @return array<int, RuleInterface>
+     * @return array<int, ConstraintInterface>
      */
-    public function getRules(): array
+    public function getConstraints(): array
     {
-        return [...$this->poolRules, ...$this->validationRules];
+        return [...$this->poolConstraints, ...$this->outputConstraints];
     }
 
     /**
      * @throws ValidationThresholdReachedException
-     * @throws UnsatisfiableRuleException
+     * @throws UnsatisfiableConstraintException
      */
     public function make(int $chunkLength = 4, int $numChunks = 1, string $spacer = ''): string
     {
@@ -96,12 +96,12 @@ class Generator
         }
 
         $totalLength = ($chunkLength * $numChunks) + (max(0, $numChunks - 1) * strlen($spacer));
-        $this->validateRuleSatisfiability($totalLength);
+        $this->validateConstraintSatisfiability($totalLength);
 
         for ($attempt = 0; $attempt < $this->validationAttempts; $attempt++) {
             $result = $this->buildString($chunkLength, $numChunks, $spacer);
 
-            if ($this->passesValidation($result)) {
+            if ($this->passesOutputConstraints($result)) {
                 return $result;
             }
         }
@@ -128,10 +128,10 @@ class Generator
         return implode($spacer, $chunks);
     }
 
-    private function passesValidation(string $value): bool
+    private function passesOutputConstraints(string $value): bool
     {
-        foreach ($this->validationRules as $rule) {
-            if (!$rule->passes($value)) {
+        foreach ($this->outputConstraints as $constraint) {
+            if (!$constraint->passes($value)) {
                 return false;
             }
         }
@@ -139,30 +139,30 @@ class Generator
         return true;
     }
 
-    private function applyPoolRules(string $pool): string
+    private function applyPoolConstraints(string $pool): string
     {
-        foreach ($this->poolRules as $rule) {
-            $pool = $rule->filter($pool);
+        foreach ($this->poolConstraints as $constraint) {
+            $pool = $constraint->filter($pool);
         }
 
         return $pool;
     }
 
     /**
-     * Run each validation rule's canBeSatisfiedBy check against the current pool.
-     * This catches impossible rule/driver combinations early (e.g. MustContainLetter
+     * Run each output constraint's canBeSatisfiedBy check against the current pool.
+     * This catches impossible constraint/driver combinations early (e.g. MustContainLetter
      * with a NumericDriver) instead of silently burning through retry attempts.
      *
-     * @throws UnsatisfiableRuleException
+     * @throws UnsatisfiableConstraintException
      */
-    private function validateRuleSatisfiability(int $length): void
+    private function validateConstraintSatisfiability(int $length): void
     {
-        foreach ($this->validationRules as $rule) {
-            if (!$rule->canBeSatisfiedBy($this->pool, $length)) {
-                throw new UnsatisfiableRuleException(
+        foreach ($this->outputConstraints as $constraint) {
+            if (!$constraint->canBeSatisfiedBy($this->pool, $length)) {
+                throw new UnsatisfiableConstraintException(
                     sprintf(
-                        'Rule [%s] can never be satisfied by the current character pool.',
-                        $rule::class,
+                        'Constraint [%s] can never be satisfied by the current character pool.',
+                        $constraint::class,
                     ),
                 );
             }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\MustContainUppercase;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainUppercase;
 use Tests\BaseTestSuite;
 
 class MustContainUppercaseTest extends BaseTestSuite

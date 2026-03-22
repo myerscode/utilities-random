@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules;
+namespace Tests\Constraints\Output;
 
-use Myerscode\Utilities\Random\Rules\MustContainLetter;
+use Myerscode\Utilities\Random\Constraints\Output\MustContainLetter;
 use Tests\BaseTestSuite;
 
 class MustContainLetterTest extends BaseTestSuite

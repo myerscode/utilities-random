@@ -6,4 +6,4 @@ namespace Myerscode\Utilities\Random\Exceptions;
 
 use Exception;
 
-class UnsatisfiableRuleException extends Exception {}
+class UnsatisfiableConstraintException extends Exception {}
