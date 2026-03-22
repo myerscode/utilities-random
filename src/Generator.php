@@ -26,6 +26,12 @@ class Generator
 
     private int $validationAttempts = 100;
 
+    /**
+     * Whether the satisfiability check has passed for the current pool/constraints.
+     * Reset to false whenever pool or constraints change.
+     */
+    private bool $satisfiabilityChecked = false;
+
     public function __construct(protected readonly RandomDriverInterface $driver)
     {
         $this->setPool($this->driver->digest());
@@ -38,6 +44,7 @@ class Generator
     {
         $this->pool = $this->applyPoolConstraints($pool);
         $this->poolLength = strlen($this->pool);
+        $this->satisfiabilityChecked = false;
 
         if ($this->poolLength === 0) {
             throw new EmptyPoolException(
@@ -96,12 +103,18 @@ class Generator
         }
 
         $totalLength = ($chunkLength * $numChunks) + (max(0, $numChunks - 1) * strlen($spacer));
-        $this->validateConstraintSatisfiability($totalLength);
+
+        if (!$this->satisfiabilityChecked) {
+            $this->validateConstraintSatisfiability($totalLength);
+            $this->satisfiabilityChecked = true;
+        }
+
+        $hasConstraints = $this->outputConstraints !== [];
 
         for ($attempt = 0; $attempt < $this->validationAttempts; $attempt++) {
             $result = $this->buildString($chunkLength, $numChunks, $spacer);
 
-            if ($this->passesOutputConstraints($result)) {
+            if (!$hasConstraints || $this->passesOutputConstraints($result)) {
                 return $result;
             }
         }
@@ -111,21 +124,60 @@ class Generator
         );
     }
 
+    /**
+     * Build a random string using batched random byte generation.
+     * Uses random_bytes() once per chunk instead of random_int() per character,
+     * with rejection sampling to avoid modulo bias.
+     */
     private function buildString(int $chunkLength, int $numChunks, string $spacer): string
     {
+        // Single chunk fast path — skip array/implode overhead
+        if ($numChunks === 1) {
+            return $this->generateChunk($chunkLength);
+        }
+
         $chunks = [];
 
-        for ($x = 0; $x < $numChunks; $x++) {
-            $chunk = '';
-
-            for ($y = 0; $y < $chunkLength; $y++) {
-                $chunk .= $this->pool[random_int(0, $this->poolLength - 1)];
-            }
-
-            $chunks[] = $chunk;
+        for ($i = 0; $i < $numChunks; $i++) {
+            $chunks[] = $this->generateChunk($chunkLength);
         }
 
         return implode($spacer, $chunks);
+    }
+
+    /**
+     * Generate a single chunk of random characters from the pool.
+     * Uses random_bytes() in bulk and maps bytes to pool indices via rejection
+     * sampling — bytes that would cause modulo bias are discarded.
+     */
+    private function generateChunk(int $length): string
+    {
+        $pool = $this->pool;
+        $poolLength = $this->poolLength;
+
+        // Rejection threshold: largest multiple of poolLength that fits in a byte.
+        // Bytes >= this value are discarded to eliminate modulo bias.
+        $threshold = 256 - (256 % $poolLength);
+
+        $result = '';
+        $remaining = $length;
+
+        while ($remaining > 0) {
+            // Request extra bytes to account for rejections
+            $bytes = random_bytes($remaining + 16);
+            $byteCount = strlen($bytes);
+
+            for ($i = 0; $i < $byteCount && $remaining > 0; $i++) {
+                $byte = ord($bytes[$i]);
+
+                if ($byte < $threshold) {
+                    $result .= $pool[$byte % $poolLength];
+                    $remaining--;
+                }
+            }
+        }
+
+        return $result;
     }
 
     private function passesOutputConstraints(string $value): bool
