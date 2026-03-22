@@ -12,6 +12,18 @@ $random = $utility
     ->generate();
 ```
 
+Rules with configurable options (like `MustContainDigit`, `NoSequentialCharacters`) use sensible defaults when passed as class names. To customise them, pass instances instead:
+
+```php
+use Myerscode\Utilities\Random\Rules\MustContainDigit;
+
+// Class name — uses default minimum of 1
+$utility->rules([MustContainDigit::class]);
+
+// Instance — custom minimum of 3
+$utility->rules([new MustContainDigit(3)]);
+```
+
 There are two categories of rules:
 
 ## Pool Rules
@@ -50,8 +62,44 @@ class NoPalindromes implements ValidationRule
     {
         return $value !== strrev($value);
     }
+
+    public function canBeSatisfiedBy(string $pool, int $length): bool
+    {
+        // Can't predict palindromes from the pool alone
+        return true;
+    }
 }
 ```
+
+## Early Conflict Detection
+
+The generator checks whether validation rules can be satisfied by the current character pool before it starts generating. This prevents wasting time on impossible combinations.
+
+For example, using `NumericDriver` with `MustContainLetter` will throw an `UnsatisfiableRuleException` immediately rather than silently failing after 100 retries:
+
+```php
+use Myerscode\Utilities\Random\Drivers\NumericDriver;
+use Myerscode\Utilities\Random\Utility;
+use Myerscode\Utilities\Random\Rules\MustContainLetter;
+
+$utility = new Utility(NumericDriver::class);
+$utility->rules([MustContainLetter::class])->length(10)->generate();
+// throws UnsatisfiableRuleException
+```
+
+Similarly, if pool rules remove all characters from the pool, an `EmptyPoolException` is thrown at rule setup time:
+
+```php
+use Myerscode\Utilities\Random\Rules\ExcludeCharacters;
+
+$utility = new Utility(NumericDriver::class);
+$utility->rules([new ExcludeCharacters(['0','1','2','3','4','5','6','7','8','9'])]);
+// throws EmptyPoolException
+```
+
+The `canBeSatisfiedBy` check also considers the requested output length. For instance, `NoRepeatingCharacters` with a single-character pool is fine for length 1, but impossible for length 2+.
+
+When creating custom validation rules, implement `canBeSatisfiedBy(string $pool, int $length): bool` to opt into this check. Return `true` if you can't predict satisfiability from the pool alone.
 
 ## Built-in Rules
 

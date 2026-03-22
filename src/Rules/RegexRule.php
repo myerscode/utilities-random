@@ -15,4 +15,13 @@ class RegexRule implements ValidationRule
     {
         return (bool) preg_match($this->pattern, $value);
     }
+
+    /**
+     * Regex patterns are too varied to predict satisfiability from the pool,
+     * so this always returns true — validation happens at generation time.
+     */
+    public function canBeSatisfiedBy(string $pool, int $length): bool
+    {
+        return true;
+    }
 }

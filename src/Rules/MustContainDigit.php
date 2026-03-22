@@ -7,12 +7,10 @@ namespace Myerscode\Utilities\Random\Rules;
 /**
  * Requires the generated string to contain at least X digits.
  */
-class MustContainDigit implements ValidationRule
+class MustContainDigit extends MustContainPattern
 {
-    public function __construct(private readonly int $minimum = 1) {}
-
-    public function passes(string $value): bool
+    protected function pattern(): string
     {
-        return preg_match_all('/\d/', $value) >= $this->minimum;
+        return '/\d/';
     }
 }

@@ -7,12 +7,10 @@ namespace Myerscode\Utilities\Random\Rules;
 /**
  * Requires the generated string to contain at least X letters.
  */
-class MustContainLetter implements ValidationRule
+class MustContainLetter extends MustContainPattern
 {
-    public function __construct(private readonly int $minimum = 1) {}
-
-    public function passes(string $value): bool
+    protected function pattern(): string
     {
-        return preg_match_all('/[a-zA-Z]/', $value) >= $this->minimum;
+        return '/[a-zA-Z]/';
     }
 }

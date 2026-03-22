@@ -50,4 +50,24 @@ class NoRepeatingCharactersTest extends BaseTestSuite
     {
         $this->assertTrue($this->rule->passes('ababab'));
     }
+
+    public function testCanBeSatisfiedByWithMultipleDistinctChars(): void
+    {
+        $this->assertTrue($this->rule->canBeSatisfiedBy('abcdef', 5));
+    }
+
+    public function testCanBeSatisfiedByFailsWithSingleChar(): void
+    {
+        $this->assertFalse($this->rule->canBeSatisfiedBy('AAAA', 5));
+    }
+
+    public function testCanBeSatisfiedByWithTwoDistinctChars(): void
+    {
+        $this->assertTrue($this->rule->canBeSatisfiedBy('ababab', 5));
+    }
+
+    public function testCanBeSatisfiedByPassesWithSingleCharPoolAndLengthOne(): void
+    {
+        $this->assertTrue($this->rule->canBeSatisfiedBy('AAAA', 1));
+    }
 }

@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Tests;
 
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
+use Myerscode\Utilities\Random\Drivers\NumericDriver;
 use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
+use Myerscode\Utilities\Random\Exceptions\UnsatisfiableRuleException;
 use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Generator;
 use Myerscode\Utilities\Random\Rules\ExcludeCharacters;
 use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
+use Myerscode\Utilities\Random\Rules\MustContainDigit;
+use Myerscode\Utilities\Random\Rules\MustContainLetter;
+use Myerscode\Utilities\Random\Rules\MustContainUppercase;
 use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
+use Myerscode\Utilities\Random\Rules\RegexRule;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class GeneratorTest extends BaseTestSuite
@@ -157,8 +163,8 @@ class GeneratorTest extends BaseTestSuite
 
     public function testValidationThresholdThrowsException(): void
     {
-        $this->generator->setRules([new NoRepeatingCharacters()]);
-        $this->generator->setPool('A');
+        $this->generator->setRules([new RegexRule('/^[0-9]+$/')]);
+        $this->generator->setPool('ABC');
 
         $this->expectException(ValidationThresholdReachedException::class);
         $this->generator->make(2);
@@ -176,5 +182,47 @@ class GeneratorTest extends BaseTestSuite
 
         $this->expectException(EmptyPoolException::class);
         $this->generator->setRules([new ExcludeCharacters(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])]);
+    }
+
+    public function testMakeThrowsWhenValidationRuleCannotBeSatisfied(): void
+    {
+        $generator = new Generator(new NumericDriver());
+        $generator->setRules([new MustContainLetter()]);
+
+        $this->expectException(UnsatisfiableRuleException::class);
+        $generator->make(5);
+    }
+
+    public function testMakeThrowsForMustContainUppercaseWithNumericPool(): void
+    {
+        $generator = new Generator(new NumericDriver());
+        $generator->setRules([new MustContainUppercase()]);
+
+        $this->expectException(UnsatisfiableRuleException::class);
+        $generator->make(5);
+    }
+
+    public function testMakeThrowsForMustContainDigitWithAlphaPool(): void
+    {
+        $this->generator->setRules([new ExcludeCharacters(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']), new MustContainDigit()]);
+
+        $this->expectException(UnsatisfiableRuleException::class);
+        $this->generator->make(5);
+    }
+
+    public function testMakeThrowsForNoRepeatingWithSingleCharPoolAndLengthAboveOne(): void
+    {
+        $this->generator->setRules([new ExcludeCharacters(array_merge(range('a', 'z'), range('A', 'Z'), range('1', '9'))), new NoRepeatingCharacters()]);
+
+        $this->expectException(UnsatisfiableRuleException::class);
+        $this->generator->make(2);
+    }
+
+    public function testMakeAllowsNoRepeatingWithSingleCharPoolAndLengthOne(): void
+    {
+        $this->generator->setRules([new ExcludeCharacters(array_merge(range('a', 'z'), range('A', 'Z'), range('1', '9'))), new NoRepeatingCharacters()]);
+
+        $result = $this->generator->make(1);
+        $this->assertSame(1, strlen($result));
     }
 }

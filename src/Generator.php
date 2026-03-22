@@ -6,6 +6,7 @@ namespace Myerscode\Utilities\Random;
 
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
+use Myerscode\Utilities\Random\Exceptions\UnsatisfiableRuleException;
 use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Rules\PoolRule;
 use Myerscode\Utilities\Random\Rules\RuleInterface;
@@ -52,6 +53,8 @@ class Generator
 
     /**
      * @param  array<int, RuleInterface>  $rules
+     *
+     * @throws EmptyPoolException
      */
     public function setRules(array $rules): void
     {
@@ -81,6 +84,7 @@ class Generator
 
     /**
      * @throws ValidationThresholdReachedException
+     * @throws UnsatisfiableRuleException
      */
     public function make(int $chunkLength = 4, int $numChunks = 1, string $spacer = ''): string
     {
@@ -90,6 +94,9 @@ class Generator
             $numChunks = 1;
             $spacer = '';
         }
+
+        $totalLength = ($chunkLength * $numChunks) + (max(0, $numChunks - 1) * strlen($spacer));
+        $this->validateRuleSatisfiability($totalLength);
 
         for ($attempt = 0; $attempt < $this->validationAttempts; $attempt++) {
             $result = $this->buildString($chunkLength, $numChunks, $spacer);
@@ -139,5 +146,26 @@ class Generator
         }
 
         return $pool;
+    }
+
+    /**
+     * Run each validation rule's canBeSatisfiedBy check against the current pool.
+     * This catches impossible rule/driver combinations early (e.g. MustContainLetter
+     * with a NumericDriver) instead of silently burning through retry attempts.
+     *
+     * @throws UnsatisfiableRuleException
+     */
+    private function validateRuleSatisfiability(int $length): void
+    {
+        foreach ($this->validationRules as $rule) {
+            if (!$rule->canBeSatisfiedBy($this->pool, $length)) {
+                throw new UnsatisfiableRuleException(
+                    sprintf(
+                        'Rule [%s] can never be satisfied by the current character pool.',
+                        $rule::class,
+                    ),
+                );
+            }
+        }
     }
 }

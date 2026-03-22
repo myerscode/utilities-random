@@ -21,4 +21,18 @@ class NoRepeatingCharacters implements ValidationRule
 
         return true;
     }
+
+    /**
+     * For length 1, any pool works since there are no adjacent characters.
+     * For length 2+, the pool needs at least 2 distinct characters, otherwise
+     * every generated string will be "AAAA..." which always has repeats.
+     */
+    public function canBeSatisfiedBy(string $pool, int $length): bool
+    {
+        if ($length <= 1) {
+            return true;
+        }
+
+        return count(array_unique(str_split($pool))) >= 2;
+    }
 }

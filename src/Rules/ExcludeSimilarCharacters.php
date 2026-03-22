@@ -6,17 +6,12 @@ namespace Myerscode\Utilities\Random\Rules;
 
 /**
  * Removes visually similar characters from the pool (e.g. oO0, I1l).
+ * Extends ExcludeCharacters with a sensible default character set.
  */
-class ExcludeSimilarCharacters implements PoolRule
+class ExcludeSimilarCharacters extends ExcludeCharacters
 {
-    /** @var array<int, string> */
-    private array $similar = ['o', 'O', '0', 'I', '1', 'l'];
-
-    public function filter(string $pool): string
+    public function __construct()
     {
-        return implode('', array_filter(
-            str_split($pool),
-            fn (string $char): bool => !in_array($char, $this->similar, true),
-        ));
+        parent::__construct(['o', 'O', '0', 'I', '1', 'l']);
     }
 }

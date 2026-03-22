@@ -7,12 +7,10 @@ namespace Myerscode\Utilities\Random\Rules;
 /**
  * Requires the generated string to contain at least X uppercase letters.
  */
-class MustContainUppercase implements ValidationRule
+class MustContainUppercase extends MustContainPattern
 {
-    public function __construct(private readonly int $minimum = 1) {}
-
-    public function passes(string $value): bool
+    protected function pattern(): string
     {
-        return preg_match_all('/[A-Z]/', $value) >= $this->minimum;
+        return '/[A-Z]/';
     }
 }

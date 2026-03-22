@@ -28,6 +28,15 @@ class NoSequentialCharacters implements ValidationRule
         return true;
     }
 
+    /**
+     * Sequential detection depends on output ordering, not pool contents,
+     * so this always returns true — we can't predict it upfront.
+     */
+    public function canBeSatisfiedBy(string $pool, int $length): bool
+    {
+        return true;
+    }
+
     private function isSequential(string $segment): bool
     {
         $ascending = true;
