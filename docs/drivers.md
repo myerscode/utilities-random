@@ -8,24 +8,47 @@ Drivers define the character pool used for random string generation. Each driver
 |--------|-----------|-----------|
 | `AlphaDriver` | Uppercase and lowercase letters (`a-z`, `A-Z`) | 52 |
 | `AlphaNumericDriver` | Letters and digits (`a-z`, `A-Z`, `0-9`) | 62 |
-| `NumericDriver` | Digits only (`0-9`, repeated for pool depth) | 50 |
+| `BinaryDriver` | Binary digits (`0`, `1`) | 50 |
+| `HexDriver` | Hexadecimal characters (`0-9`, `a-f`) | 16 |
+| `LowercaseAlphaDriver` | Lowercase letters only (`a-z`) | 52 |
+| `NumericDriver` | Digits only (`0-9`) | 50 |
+| `UppercaseAlphaDriver` | Uppercase letters only (`A-Z`) | 52 |
 
 ## Usage
 
 Pass a driver class name or instance when creating a `Utility`:
 
 ```php
-use Myerscode\Utilities\Random\Drivers\AlphaDriver;
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
-use Myerscode\Utilities\Random\Drivers\NumericDriver;
+use Myerscode\Utilities\Random\Drivers\HexDriver;
 use Myerscode\Utilities\Random\Utility;
 
-$alpha = new Utility(AlphaDriver::class);
-$alphaNumeric = new Utility(new AlphaNumericDriver());
-$numeric = new Utility(NumericDriver::class);
+$alphaNumeric = new Utility(AlphaNumericDriver::class);
+$hex = new Utility(new HexDriver());
 ```
 
-## Creating a Custom Driver
+## CustomDriver
+
+For full control over the character set, use `CustomDriver` with your own characters:
+
+```php
+use Myerscode\Utilities\Random\Drivers\CustomDriver;
+use Myerscode\Utilities\Random\Utility;
+
+// Emoji pool
+$driver = new CustomDriver(['🎲', '🎯', '🎰', '🃏']);
+$utility = new Utility($driver);
+$result = $utility->length(5)->generate();
+
+// Special characters
+$driver = new CustomDriver(['!', '@', '#', '$', '%']);
+$utility = new Utility($driver);
+$result = $utility->length(8)->generate();
+```
+
+Note: since `CustomDriver` requires constructor arguments, pass an instance rather than a class name.
+
+## Creating Your Own Driver
 
 Implement `RandomDriverInterface` (or extend `AbstractDriver` for the shuffle helpers):
 
@@ -33,13 +56,17 @@ Implement `RandomDriverInterface` (or extend `AbstractDriver` for the shuffle he
 use Myerscode\Utilities\Random\Drivers\AbstractDriver;
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 
-class HexDriver extends AbstractDriver implements RandomDriverInterface
+class OctalDriver extends AbstractDriver implements RandomDriverInterface
 {
     public function seed(): void
     {
-        $chars = array_merge(range(0, 9), range('a', 'f'));
+        $ranges = [];
 
-        $seed = $this->shuffleString(implode('', $chars));
+        for ($i = 0; $i < 5; $i++) {
+            $ranges[] = implode('', array_map(strval(...), $this->shuffleArray(range(0, 7))));
+        }
+
+        $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
 
         for ($i = 0; $i < $this->iterations; $i++) {
             $seed = $this->shuffleString($seed);
@@ -53,6 +80,6 @@ class HexDriver extends AbstractDriver implements RandomDriverInterface
 Then use it like any other driver:
 
 ```php
-$utility = new Utility(HexDriver::class);
-$hex = $utility->length(8)->generate(); // e.g. "3fa8c1b0"
+$utility = new Utility(OctalDriver::class);
+$octal = $utility->length(8)->generate(); // e.g. "37150462"
 ```
