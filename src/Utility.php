@@ -6,7 +6,9 @@ namespace Myerscode\Utilities\Random;
 
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 use Myerscode\Utilities\Random\Exceptions\InvalidProviderException;
+use Myerscode\Utilities\Random\Exceptions\InvalidRuleException;
 use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
+use Myerscode\Utilities\Random\Rules\RuleInterface;
 
 class Utility
 {
@@ -46,6 +48,40 @@ class Utility
 
         $this->driver = $provider;
         $this->generator = new Generator($this->driver);
+    }
+
+    /**
+     * Apply rules to the generator. Accepts class names or instances.
+     *
+     * @param  array<int, RuleInterface|string>  $rules
+     *
+     * @throws InvalidRuleException
+     */
+    public function rules(array $rules): static
+    {
+        $resolved = [];
+
+        foreach ($rules as $rule) {
+            if (is_string($rule)) {
+                if (!class_exists($rule)) {
+                    throw new InvalidRuleException(sprintf('Rule class [%s] does not exist', $rule));
+                }
+
+                $instance = new $rule();
+
+                if (!$instance instanceof RuleInterface) {
+                    throw new InvalidRuleException(sprintf('Rule [%s] must implement RuleInterface', $rule));
+                }
+
+                $resolved[] = $instance;
+            } else {
+                $resolved[] = $rule;
+            }
+        }
+
+        $this->generator->setRules($resolved);
+
+        return $this;
     }
 
     public function seed(): void

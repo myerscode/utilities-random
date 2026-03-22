@@ -39,11 +39,11 @@ $random = $utility->length(4)->chunks(3)->spacer('-')->generate();
 $unique = $utility->length(10)->unique();
 ```
 
-## Available Drivers
+## Documentation
 
-- `AlphaDriver` — uppercase and lowercase letters
-- `AlphaNumericDriver` — letters and digits
-- `NumericDriver` — digits only
+- [Usage](docs/usage.md) — full API reference and usage examples
+- [Drivers](docs/drivers.md) — built-in drivers and creating custom ones
+- [Rules](docs/rules.md) — constraining generation with pool filters and validation rules
 
 ## License
 

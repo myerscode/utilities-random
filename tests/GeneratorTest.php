@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests;
 
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
+use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Generator;
+use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
+use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class GeneratorTest extends BaseTestSuite
@@ -89,5 +92,73 @@ class GeneratorTest extends BaseTestSuite
     ): void {
         $result = $this->generator->make($chunkLength, $numChunks, $spacer);
         $this->assertSame($expectedLength, strlen($result));
+    }
+
+    public function testSetRulesAppliesPoolRule(): void
+    {
+        $this->generator->setRules([new ExcludeSimilarCharacters()]);
+        $pool = $this->generator->getPool();
+
+        $this->assertStringNotContainsString('o', $pool);
+        $this->assertStringNotContainsString('O', $pool);
+        $this->assertStringNotContainsString('0', $pool);
+        $this->assertStringNotContainsString('I', $pool);
+        $this->assertStringNotContainsString('1', $pool);
+        $this->assertStringNotContainsString('l', $pool);
+    }
+
+    public function testSetRulesAppliesValidationRule(): void
+    {
+        $this->generator->setPool('AB');
+        $this->generator->setRules([new NoRepeatingCharacters()]);
+
+        for ($i = 0; $i < 20; $i++) {
+            $result = $this->generator->make(4);
+
+            for ($j = 1; $j < strlen($result); $j++) {
+                $this->assertNotSame($result[$j], $result[$j - 1]);
+            }
+        }
+    }
+
+    public function testSetRulesWithBothRuleTypes(): void
+    {
+        $this->generator->setRules([
+            new ExcludeSimilarCharacters(),
+            new NoRepeatingCharacters(),
+        ]);
+
+        $pool = $this->generator->getPool();
+        $this->assertStringNotContainsString('0', $pool);
+
+        $result = $this->generator->make(6);
+        for ($i = 1; $i < strlen($result); $i++) {
+            $this->assertNotSame($result[$i], $result[$i - 1]);
+        }
+    }
+
+    public function testGetRulesReturnsSetRules(): void
+    {
+        $rules = [new ExcludeSimilarCharacters(), new NoRepeatingCharacters()];
+        $this->generator->setRules($rules);
+
+        $this->assertCount(2, $this->generator->getRules());
+    }
+
+    public function testSetRulesClearsExistingRules(): void
+    {
+        $this->generator->setRules([new ExcludeSimilarCharacters()]);
+        $this->generator->setRules([]);
+
+        $this->assertCount(0, $this->generator->getRules());
+    }
+
+    public function testValidationThresholdThrowsException(): void
+    {
+        $this->generator->setRules([new NoRepeatingCharacters()]);
+        $this->generator->setPool('A');
+
+        $this->expectException(ValidationThresholdReachedException::class);
+        $this->generator->make(2);
     }
 }
