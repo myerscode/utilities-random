@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Myerscode\Utilities\Random;
 
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
+use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
 use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Rules\PoolRule;
 use Myerscode\Utilities\Random\Rules\RuleInterface;
@@ -29,10 +30,19 @@ class Generator
         $this->setPool($this->driver->digest());
     }
 
+    /**
+     * @throws EmptyPoolException
+     */
     public function setPool(string $pool): void
     {
         $this->pool = $this->applyPoolRules($pool);
         $this->poolLength = strlen($this->pool);
+
+        if ($this->poolLength === 0) {
+            throw new EmptyPoolException(
+                'The character pool is empty after applying pool rules. Check your driver and rule combination.',
+            );
+        }
     }
 
     public function getPool(): string

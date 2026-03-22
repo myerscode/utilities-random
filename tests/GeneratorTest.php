@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests;
 
 use Myerscode\Utilities\Random\Drivers\AlphaNumericDriver;
+use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
 use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Generator;
+use Myerscode\Utilities\Random\Rules\ExcludeCharacters;
 use Myerscode\Utilities\Random\Rules\ExcludeSimilarCharacters;
 use Myerscode\Utilities\Random\Rules\NoRepeatingCharacters;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -160,5 +162,19 @@ class GeneratorTest extends BaseTestSuite
 
         $this->expectException(ValidationThresholdReachedException::class);
         $this->generator->make(2);
+    }
+
+    public function testSetPoolThrowsWhenEmpty(): void
+    {
+        $this->expectException(EmptyPoolException::class);
+        $this->generator->setPool('');
+    }
+
+    public function testSetRulesThrowsWhenPoolRulesEmptyThePool(): void
+    {
+        $this->generator->setPool('abc');
+
+        $this->expectException(EmptyPoolException::class);
+        $this->generator->setRules([new ExcludeCharacters(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])]);
     }
 }
