@@ -7,41 +7,41 @@ namespace Tests\Constraints\Output;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainDigit;
 use Tests\BaseTestSuite;
 
-class MustContainDigitTest extends BaseTestSuite
+final class MustContainDigitTest extends BaseTestSuite
 {
     public function testPassesWithDefaultMinimum(): void
     {
-        $rule = new MustContainDigit();
-        $this->assertTrue($rule->passes('abc1'));
+        $mustContainDigit = new MustContainDigit();
+        $this->assertTrue($mustContainDigit->passes('abc1'));
     }
 
     public function testFailsWithNoDigits(): void
     {
-        $rule = new MustContainDigit();
-        $this->assertFalse($rule->passes('abcdef'));
+        $mustContainDigit = new MustContainDigit();
+        $this->assertFalse($mustContainDigit->passes('abcdef'));
     }
 
     public function testPassesWithCustomMinimum(): void
     {
-        $rule = new MustContainDigit(3);
-        $this->assertTrue($rule->passes('a1b2c3'));
+        $mustContainDigit = new MustContainDigit(3);
+        $this->assertTrue($mustContainDigit->passes('a1b2c3'));
     }
 
     public function testFailsWhenBelowCustomMinimum(): void
     {
-        $rule = new MustContainDigit(3);
-        $this->assertFalse($rule->passes('a1b2cd'));
+        $mustContainDigit = new MustContainDigit(3);
+        $this->assertFalse($mustContainDigit->passes('a1b2cd'));
     }
 
     public function testPassesWithAllDigits(): void
     {
-        $rule = new MustContainDigit(5);
-        $this->assertTrue($rule->passes('12345'));
+        $mustContainDigit = new MustContainDigit(5);
+        $this->assertTrue($mustContainDigit->passes('12345'));
     }
 
     public function testFailsWithEmptyString(): void
     {
-        $rule = new MustContainDigit();
-        $this->assertFalse($rule->passes(''));
+        $mustContainDigit = new MustContainDigit();
+        $this->assertFalse($mustContainDigit->passes(''));
     }
 }

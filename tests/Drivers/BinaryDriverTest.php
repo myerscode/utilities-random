@@ -7,32 +7,32 @@ namespace Tests\Drivers;
 use Myerscode\Utilities\Random\Drivers\BinaryDriver;
 use Tests\BaseTestSuite;
 
-class BinaryDriverTest extends BaseTestSuite
+final class BinaryDriverTest extends BaseTestSuite
 {
-    protected BinaryDriver $driver;
+    private BinaryDriver $binaryDriver;
 
     protected function setUp(): void
     {
-        $this->driver = new BinaryDriver();
+        $this->binaryDriver = new BinaryDriver();
     }
 
     public function testDigestContainsOnlyBinaryCharacters(): void
     {
-        $seed = $this->driver->digest();
+        $seed = $this->binaryDriver->digest();
         $this->assertMatchesRegularExpression('/^[01]+$/', $seed);
     }
 
     public function testDigestContainsExpectedLength(): void
     {
-        $digest = $this->driver->digest();
+        $digest = $this->binaryDriver->digest();
         $this->assertSame(50, strlen($digest));
     }
 
     public function testSeedRegeneratesDigest(): void
     {
-        $first = $this->driver->digest();
-        $this->driver->seed();
-        $second = $this->driver->digest();
+        $first = $this->binaryDriver->digest();
+        $this->binaryDriver->seed();
+        $second = $this->binaryDriver->digest();
 
         $this->assertSame(strlen($first), strlen($second));
         $this->assertMatchesRegularExpression('/^[01]+$/', $second);

@@ -9,42 +9,42 @@ use Myerscode\Utilities\Random\Constraints\Output\MustContainLetter;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainUppercase;
 use Tests\BaseTestSuite;
 
-class MustContainPatternTest extends BaseTestSuite
+final class MustContainPatternTest extends BaseTestSuite
 {
     public function testCanBeSatisfiedByReturnsTrueWhenPoolContainsMatch(): void
     {
-        $rule = new MustContainDigit();
-        $this->assertTrue($rule->canBeSatisfiedBy('abc123', 5));
+        $mustContainDigit = new MustContainDigit();
+        $this->assertTrue($mustContainDigit->canBeSatisfiedBy('abc123', 5));
     }
 
     public function testCanBeSatisfiedByReturnsFalseWhenPoolLacksMatch(): void
     {
-        $rule = new MustContainDigit();
-        $this->assertFalse($rule->canBeSatisfiedBy('abcdef', 5));
+        $mustContainDigit = new MustContainDigit();
+        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('abcdef', 5));
     }
 
     public function testMustContainLetterCanBeSatisfied(): void
     {
-        $rule = new MustContainLetter();
-        $this->assertTrue($rule->canBeSatisfiedBy('123a', 5));
-        $this->assertFalse($rule->canBeSatisfiedBy('12345', 5));
+        $mustContainLetter = new MustContainLetter();
+        $this->assertTrue($mustContainLetter->canBeSatisfiedBy('123a', 5));
+        $this->assertFalse($mustContainLetter->canBeSatisfiedBy('12345', 5));
     }
 
     public function testMustContainUppercaseCanBeSatisfied(): void
     {
-        $rule = new MustContainUppercase();
-        $this->assertTrue($rule->canBeSatisfiedBy('abcA', 5));
-        $this->assertFalse($rule->canBeSatisfiedBy('abcdef', 5));
+        $mustContainUppercase = new MustContainUppercase();
+        $this->assertTrue($mustContainUppercase->canBeSatisfiedBy('abcA', 5));
+        $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('abcdef', 5));
     }
 
     public function testCanBeSatisfiedByWithEmptyPool(): void
     {
-        $digit = new MustContainDigit();
-        $letter = new MustContainLetter();
-        $upper = new MustContainUppercase();
+        $mustContainDigit = new MustContainDigit();
+        $mustContainLetter = new MustContainLetter();
+        $mustContainUppercase = new MustContainUppercase();
 
-        $this->assertFalse($digit->canBeSatisfiedBy('', 5));
-        $this->assertFalse($letter->canBeSatisfiedBy('', 5));
-        $this->assertFalse($upper->canBeSatisfiedBy('', 5));
+        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('', 5));
+        $this->assertFalse($mustContainLetter->canBeSatisfiedBy('', 5));
+        $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('', 5));
     }
 }

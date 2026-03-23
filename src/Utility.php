@@ -12,7 +12,7 @@ use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 
 class Utility
 {
-    private RandomDriverInterface $driver;
+    private readonly RandomDriverInterface $randomDriver;
 
     private readonly Generator $generator;
 
@@ -46,8 +46,8 @@ class Utility
             }
         }
 
-        $this->driver = $provider;
-        $this->generator = new Generator($this->driver);
+        $this->randomDriver = $provider;
+        $this->generator = new Generator($this->randomDriver);
     }
 
     /**
@@ -86,7 +86,7 @@ class Utility
 
     public function seed(): void
     {
-        $this->driver->seed();
+        $this->randomDriver->seed();
     }
 
     public function chunks(int $chunks): static
@@ -155,7 +155,7 @@ class Utility
 
     public function permutations(): int
     {
-        return strlen($this->driver->digest()) ** $this->length;
+        return strlen((string) $this->randomDriver->digest()) ** $this->length;
     }
 
     private function make(): string

@@ -7,36 +7,36 @@ namespace Tests\Constraints\Pool;
 use Myerscode\Utilities\Random\Constraints\Pool\ExcludeSimilarCharacters;
 use Tests\BaseTestSuite;
 
-class ExcludeSimilarCharactersTest extends BaseTestSuite
+final class ExcludeSimilarCharactersTest extends BaseTestSuite
 {
-    private ExcludeSimilarCharacters $rule;
+    private ExcludeSimilarCharacters $excludeSimilarCharacters;
 
     protected function setUp(): void
     {
-        $this->rule = new ExcludeSimilarCharacters();
+        $this->excludeSimilarCharacters = new ExcludeSimilarCharacters();
     }
 
     public function testRemovesSimilarCharactersFromPool(): void
     {
-        $filtered = $this->rule->filter('abcOo0I1lxyz');
+        $filtered = $this->excludeSimilarCharacters->filter('abcOo0I1lxyz');
         $this->assertSame('abcxyz', $filtered);
     }
 
     public function testLeavesPoolIntactWhenNoSimilarCharacters(): void
     {
-        $filtered = $this->rule->filter('abcdef');
+        $filtered = $this->excludeSimilarCharacters->filter('abcdef');
         $this->assertSame('abcdef', $filtered);
     }
 
     public function testHandlesEmptyPool(): void
     {
-        $filtered = $this->rule->filter('');
+        $filtered = $this->excludeSimilarCharacters->filter('');
         $this->assertSame('', $filtered);
     }
 
     public function testRemovesAllWhenPoolIsOnlySimilarCharacters(): void
     {
-        $filtered = $this->rule->filter('oO0I1l');
+        $filtered = $this->excludeSimilarCharacters->filter('oO0I1l');
         $this->assertSame('', $filtered);
     }
 }

@@ -7,41 +7,41 @@ namespace Tests\Constraints\Output;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainLetter;
 use Tests\BaseTestSuite;
 
-class MustContainLetterTest extends BaseTestSuite
+final class MustContainLetterTest extends BaseTestSuite
 {
     public function testPassesWithDefaultMinimum(): void
     {
-        $rule = new MustContainLetter();
-        $this->assertTrue($rule->passes('1a23'));
+        $mustContainLetter = new MustContainLetter();
+        $this->assertTrue($mustContainLetter->passes('1a23'));
     }
 
     public function testFailsWithNoLetters(): void
     {
-        $rule = new MustContainLetter();
-        $this->assertFalse($rule->passes('12345'));
+        $mustContainLetter = new MustContainLetter();
+        $this->assertFalse($mustContainLetter->passes('12345'));
     }
 
     public function testPassesWithCustomMinimum(): void
     {
-        $rule = new MustContainLetter(3);
-        $this->assertTrue($rule->passes('a1b2c'));
+        $mustContainLetter = new MustContainLetter(3);
+        $this->assertTrue($mustContainLetter->passes('a1b2c'));
     }
 
     public function testFailsWhenBelowCustomMinimum(): void
     {
-        $rule = new MustContainLetter(3);
-        $this->assertFalse($rule->passes('a1b23'));
+        $mustContainLetter = new MustContainLetter(3);
+        $this->assertFalse($mustContainLetter->passes('a1b23'));
     }
 
     public function testCountsBothCases(): void
     {
-        $rule = new MustContainLetter(4);
-        $this->assertTrue($rule->passes('AaBb'));
+        $mustContainLetter = new MustContainLetter(4);
+        $this->assertTrue($mustContainLetter->passes('AaBb'));
     }
 
     public function testFailsWithEmptyString(): void
     {
-        $rule = new MustContainLetter();
-        $this->assertFalse($rule->passes(''));
+        $mustContainLetter = new MustContainLetter();
+        $this->assertFalse($mustContainLetter->passes(''));
     }
 }

@@ -7,38 +7,38 @@ namespace Tests\Constraints\Output;
 use Myerscode\Utilities\Random\Constraints\Output\RegexConstraint;
 use Tests\BaseTestSuite;
 
-class RegexConstraintTest extends BaseTestSuite
+final class RegexConstraintTest extends BaseTestSuite
 {
     public function testPassesWhenPatternMatches(): void
     {
-        $rule = new RegexConstraint('/^[a-z]+$/');
-        $this->assertTrue($rule->passes('abcdef'));
+        $regexConstraint = new RegexConstraint('/^[a-z]+$/');
+        $this->assertTrue($regexConstraint->passes('abcdef'));
     }
 
     public function testFailsWhenPatternDoesNotMatch(): void
     {
-        $rule = new RegexConstraint('/^[a-z]+$/');
-        $this->assertFalse($rule->passes('ABC123'));
+        $regexConstraint = new RegexConstraint('/^[a-z]+$/');
+        $this->assertFalse($regexConstraint->passes('ABC123'));
     }
 
     public function testWorksWithDigitPattern(): void
     {
-        $rule = new RegexConstraint('/\d/');
-        $this->assertTrue($rule->passes('abc1'));
-        $this->assertFalse($rule->passes('abcd'));
+        $regexConstraint = new RegexConstraint('/\d/');
+        $this->assertTrue($regexConstraint->passes('abc1'));
+        $this->assertFalse($regexConstraint->passes('abcd'));
     }
 
     public function testWorksWithStartAndEndAnchors(): void
     {
-        $rule = new RegexConstraint('/^[A-Z]{3}\d{3}$/');
-        $this->assertTrue($rule->passes('ABC123'));
-        $this->assertFalse($rule->passes('abc123'));
-        $this->assertFalse($rule->passes('ABCD123'));
+        $regexConstraint = new RegexConstraint('/^[A-Z]{3}\d{3}$/');
+        $this->assertTrue($regexConstraint->passes('ABC123'));
+        $this->assertFalse($regexConstraint->passes('abc123'));
+        $this->assertFalse($regexConstraint->passes('ABCD123'));
     }
 
     public function testPassesWithEmptyStringWhenPatternAllows(): void
     {
-        $rule = new RegexConstraint('/^.*$/');
-        $this->assertTrue($rule->passes(''));
+        $regexConstraint = new RegexConstraint('/^.*$/');
+        $this->assertTrue($regexConstraint->passes(''));
     }
 }

@@ -7,41 +7,41 @@ namespace Tests\Constraints\Pool;
 use Myerscode\Utilities\Random\Constraints\Pool\ExcludeCharacters;
 use Tests\BaseTestSuite;
 
-class ExcludeCharactersTest extends BaseTestSuite
+final class ExcludeCharactersTest extends BaseTestSuite
 {
     public function testRemovesSpecifiedCharacters(): void
     {
-        $rule = new ExcludeCharacters(['a', 'b', 'c']);
-        $this->assertSame('defgh', $rule->filter('abcdefgh'));
+        $excludeCharacters = new ExcludeCharacters(['a', 'b', 'c']);
+        $this->assertSame('defgh', $excludeCharacters->filter('abcdefgh'));
     }
 
     public function testLeavesPoolIntactWhenNoMatchingCharacters(): void
     {
-        $rule = new ExcludeCharacters(['x', 'y', 'z']);
-        $this->assertSame('abcdef', $rule->filter('abcdef'));
+        $excludeCharacters = new ExcludeCharacters(['x', 'y', 'z']);
+        $this->assertSame('abcdef', $excludeCharacters->filter('abcdef'));
     }
 
     public function testHandlesEmptyExclusionList(): void
     {
-        $rule = new ExcludeCharacters([]);
-        $this->assertSame('abcdef', $rule->filter('abcdef'));
+        $excludeCharacters = new ExcludeCharacters([]);
+        $this->assertSame('abcdef', $excludeCharacters->filter('abcdef'));
     }
 
     public function testHandlesEmptyPool(): void
     {
-        $rule = new ExcludeCharacters(['a']);
-        $this->assertSame('', $rule->filter(''));
+        $excludeCharacters = new ExcludeCharacters(['a']);
+        $this->assertSame('', $excludeCharacters->filter(''));
     }
 
     public function testRemovesAllWhenPoolMatchesExclusions(): void
     {
-        $rule = new ExcludeCharacters(['a', 'b']);
-        $this->assertSame('', $rule->filter('aabb'));
+        $excludeCharacters = new ExcludeCharacters(['a', 'b']);
+        $this->assertSame('', $excludeCharacters->filter('aabb'));
     }
 
     public function testIsCaseSensitive(): void
     {
-        $rule = new ExcludeCharacters(['a']);
-        $this->assertSame('AbcA', $rule->filter('AabcA'));
+        $excludeCharacters = new ExcludeCharacters(['a']);
+        $this->assertSame('AbcA', $excludeCharacters->filter('AabcA'));
     }
 }

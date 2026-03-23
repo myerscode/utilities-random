@@ -7,32 +7,32 @@ namespace Tests\Drivers;
 use Myerscode\Utilities\Random\Drivers\HexDriver;
 use Tests\BaseTestSuite;
 
-class HexDriverTest extends BaseTestSuite
+final class HexDriverTest extends BaseTestSuite
 {
-    protected HexDriver $driver;
+    private HexDriver $hexDriver;
 
     protected function setUp(): void
     {
-        $this->driver = new HexDriver();
+        $this->hexDriver = new HexDriver();
     }
 
     public function testDigestContainsOnlyHexCharacters(): void
     {
-        $seed = $this->driver->digest();
+        $seed = $this->hexDriver->digest();
         $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $seed);
     }
 
     public function testDigestContainsExpectedLength(): void
     {
-        $digest = $this->driver->digest();
+        $digest = $this->hexDriver->digest();
         $this->assertSame(16, strlen($digest));
     }
 
     public function testSeedRegeneratesDigest(): void
     {
-        $first = $this->driver->digest();
-        $this->driver->seed();
-        $second = $this->driver->digest();
+        $first = $this->hexDriver->digest();
+        $this->hexDriver->seed();
+        $second = $this->hexDriver->digest();
 
         $this->assertSame(strlen($first), strlen($second));
         $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $second);

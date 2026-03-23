@@ -7,32 +7,32 @@ namespace Tests\Drivers;
 use Myerscode\Utilities\Random\Drivers\NumericDriver;
 use Tests\BaseTestSuite;
 
-class NumericDriverTest extends BaseTestSuite
+final class NumericDriverTest extends BaseTestSuite
 {
-    protected NumericDriver $driver;
+    private NumericDriver $numericDriver;
 
     protected function setUp(): void
     {
-        $this->driver = new NumericDriver();
+        $this->numericDriver = new NumericDriver();
     }
 
     public function testDigestContainsOnlyNumericCharacters(): void
     {
-        $seed = $this->driver->digest();
+        $seed = $this->numericDriver->digest();
         $this->assertMatchesRegularExpression('/^\d+$/', $seed);
     }
 
     public function testDigestContainsExpectedLength(): void
     {
-        $digest = $this->driver->digest();
+        $digest = $this->numericDriver->digest();
         $this->assertSame(50, strlen($digest));
     }
 
     public function testSeedRegeneratesDigest(): void
     {
-        $first = $this->driver->digest();
-        $this->driver->seed();
-        $second = $this->driver->digest();
+        $first = $this->numericDriver->digest();
+        $this->numericDriver->seed();
+        $second = $this->numericDriver->digest();
 
         $this->assertSame(strlen($first), strlen($second));
         $this->assertMatchesRegularExpression('/^\d+$/', $second);

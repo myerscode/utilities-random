@@ -8,27 +8,27 @@ use Myerscode\Utilities\Random\Drivers\CustomDriver;
 use Myerscode\Utilities\Random\Utility;
 use Tests\BaseTestSuite;
 
-class CustomDriverTest extends BaseTestSuite
+final class CustomDriverTest extends BaseTestSuite
 {
     public function testDigestContainsOnlyProvidedCharacters(): void
     {
-        $driver = new CustomDriver(['x', 'y', 'z']);
-        $seed = $driver->digest();
+        $customDriver = new CustomDriver(['x', 'y', 'z']);
+        $seed = $customDriver->digest();
         $this->assertMatchesRegularExpression('/^[xyz]+$/', $seed);
     }
 
     public function testDigestLengthScalesWithCharacterCount(): void
     {
-        $driver = new CustomDriver(['a', 'b', 'c']);
-        $this->assertSame(15, strlen($driver->digest()));
+        $customDriver = new CustomDriver(['a', 'b', 'c']);
+        $this->assertSame(15, strlen($customDriver->digest()));
     }
 
     public function testSeedRegeneratesDigest(): void
     {
-        $driver = new CustomDriver(['a', 'b']);
-        $first = $driver->digest();
-        $driver->seed();
-        $second = $driver->digest();
+        $customDriver = new CustomDriver(['a', 'b']);
+        $first = $customDriver->digest();
+        $customDriver->seed();
+        $second = $customDriver->digest();
 
         $this->assertSame(strlen($first), strlen($second));
         $this->assertMatchesRegularExpression('/^[ab]+$/', $second);
@@ -36,8 +36,8 @@ class CustomDriverTest extends BaseTestSuite
 
     public function testWorksWithUtility(): void
     {
-        $driver = new CustomDriver(['1', '2', '3']);
-        $utility = new Utility($driver);
+        $customDriver = new CustomDriver(['1', '2', '3']);
+        $utility = new Utility($customDriver);
         $result = $utility->length(10)->generate();
 
         $this->assertSame(10, strlen($result));
@@ -46,14 +46,14 @@ class CustomDriverTest extends BaseTestSuite
 
     public function testWorksWithSingleCharacter(): void
     {
-        $driver = new CustomDriver(['A']);
-        $this->assertMatchesRegularExpression('/^A+$/', $driver->digest());
+        $customDriver = new CustomDriver(['A']);
+        $this->assertMatchesRegularExpression('/^A+$/', $customDriver->digest());
     }
 
     public function testWorksWithSpecialCharacters(): void
     {
-        $driver = new CustomDriver(['!', '@', '#', '$']);
-        $seed = $driver->digest();
+        $customDriver = new CustomDriver(['!', '@', '#', '$']);
+        $seed = $customDriver->digest();
         $this->assertMatchesRegularExpression('/^[!@#$]+$/', $seed);
     }
 }

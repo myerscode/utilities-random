@@ -184,9 +184,9 @@ class Generator
             $values = unpack('C*', random_bytes($requestSize));
             /** @var array<int, int> $values */
 
-            foreach ($values as $byte) {
-                if ($byte < $threshold) {
-                    $result[$pos++] = $poolArray[$byte % $poolLength];
+            foreach ($values as $value) {
+                if ($value < $threshold) {
+                    $result[$pos++] = $poolArray[$value % $poolLength];
 
                     if ($pos === $length) {
                         break;
@@ -200,19 +200,13 @@ class Generator
 
     private function passesOutputConstraints(string $value): bool
     {
-        foreach ($this->outputConstraints as $constraint) {
-            if (!$constraint->passes($value)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->outputConstraints, fn($constraint) => $constraint->passes($value));
     }
 
     private function applyPoolConstraints(string $pool): string
     {
-        foreach ($this->poolConstraints as $constraint) {
-            $pool = $constraint->filter($pool);
+        foreach ($this->poolConstraints as $poolConstraint) {
+            $pool = $poolConstraint->filter($pool);
         }
 
         return $pool;
@@ -227,12 +221,12 @@ class Generator
      */
     private function validateConstraintSatisfiability(int $length): void
     {
-        foreach ($this->outputConstraints as $constraint) {
-            if (!$constraint->canBeSatisfiedBy($this->pool, $length)) {
+        foreach ($this->outputConstraints as $outputConstraint) {
+            if (!$outputConstraint->canBeSatisfiedBy($this->pool, $length)) {
                 throw new UnsatisfiableConstraintException(
                     sprintf(
                         'Constraint [%s] can never be satisfied by the current character pool.',
-                        $constraint::class,
+                        $outputConstraint::class,
                     ),
                 );
             }

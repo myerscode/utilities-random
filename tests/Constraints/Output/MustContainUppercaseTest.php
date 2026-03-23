@@ -7,41 +7,41 @@ namespace Tests\Constraints\Output;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainUppercase;
 use Tests\BaseTestSuite;
 
-class MustContainUppercaseTest extends BaseTestSuite
+final class MustContainUppercaseTest extends BaseTestSuite
 {
     public function testPassesWithDefaultMinimum(): void
     {
-        $rule = new MustContainUppercase();
-        $this->assertTrue($rule->passes('abcD'));
+        $mustContainUppercase = new MustContainUppercase();
+        $this->assertTrue($mustContainUppercase->passes('abcD'));
     }
 
     public function testFailsWithNoUppercase(): void
     {
-        $rule = new MustContainUppercase();
-        $this->assertFalse($rule->passes('abcdef'));
+        $mustContainUppercase = new MustContainUppercase();
+        $this->assertFalse($mustContainUppercase->passes('abcdef'));
     }
 
     public function testPassesWithCustomMinimum(): void
     {
-        $rule = new MustContainUppercase(3);
-        $this->assertTrue($rule->passes('ABCdef'));
+        $mustContainUppercase = new MustContainUppercase(3);
+        $this->assertTrue($mustContainUppercase->passes('ABCdef'));
     }
 
     public function testFailsWhenBelowCustomMinimum(): void
     {
-        $rule = new MustContainUppercase(3);
-        $this->assertFalse($rule->passes('ABcdef'));
+        $mustContainUppercase = new MustContainUppercase(3);
+        $this->assertFalse($mustContainUppercase->passes('ABcdef'));
     }
 
     public function testDoesNotCountLowercase(): void
     {
-        $rule = new MustContainUppercase(2);
-        $this->assertFalse($rule->passes('Aabcde'));
+        $mustContainUppercase = new MustContainUppercase(2);
+        $this->assertFalse($mustContainUppercase->passes('Aabcde'));
     }
 
     public function testFailsWithEmptyString(): void
     {
-        $rule = new MustContainUppercase();
-        $this->assertFalse($rule->passes(''));
+        $mustContainUppercase = new MustContainUppercase();
+        $this->assertFalse($mustContainUppercase->passes(''));
     }
 }

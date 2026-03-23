@@ -7,32 +7,32 @@ namespace Tests\Drivers;
 use Myerscode\Utilities\Random\Drivers\LowercaseAlphaDriver;
 use Tests\BaseTestSuite;
 
-class LowercaseAlphaDriverTest extends BaseTestSuite
+final class LowercaseAlphaDriverTest extends BaseTestSuite
 {
-    protected LowercaseAlphaDriver $driver;
+    private LowercaseAlphaDriver $lowercaseAlphaDriver;
 
     protected function setUp(): void
     {
-        $this->driver = new LowercaseAlphaDriver();
+        $this->lowercaseAlphaDriver = new LowercaseAlphaDriver();
     }
 
     public function testDigestContainsOnlyLowercaseCharacters(): void
     {
-        $seed = $this->driver->digest();
+        $seed = $this->lowercaseAlphaDriver->digest();
         $this->assertMatchesRegularExpression('/^[a-z]+$/', $seed);
     }
 
     public function testDigestContainsExpectedLength(): void
     {
-        $digest = $this->driver->digest();
+        $digest = $this->lowercaseAlphaDriver->digest();
         $this->assertSame(52, strlen($digest));
     }
 
     public function testSeedRegeneratesDigest(): void
     {
-        $first = $this->driver->digest();
-        $this->driver->seed();
-        $second = $this->driver->digest();
+        $first = $this->lowercaseAlphaDriver->digest();
+        $this->lowercaseAlphaDriver->seed();
+        $second = $this->lowercaseAlphaDriver->digest();
 
         $this->assertSame(strlen($first), strlen($second));
         $this->assertMatchesRegularExpression('/^[a-z]+$/', $second);

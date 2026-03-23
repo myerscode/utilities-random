@@ -2,6 +2,8 @@
 
 > A fluent PHP utility class to help create random values.
 
+> ⚠️ This package is designed for generating random strings, codes, and identifiers — not for cryptographic purposes. Do not use it for passwords, tokens, or anything requiring cryptographic security.
+
 [![Latest Stable Version](https://poser.pugx.org/myerscode/utilities-random/v/stable)](https://packagist.org/packages/myerscode/utilities-random)
 [![Total Downloads](https://poser.pugx.org/myerscode/utilities-random/downloads)](https://packagist.org/packages/myerscode/utilities-random)
 [![License](https://poser.pugx.org/myerscode/utilities-random/license)](https://packagist.org/packages/myerscode/utilities-random)

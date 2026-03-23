@@ -11,15 +11,11 @@ use Myerscode\Utilities\Random\Constraints\PoolConstraint;
  */
 class ExcludeCharacters implements PoolConstraint
 {
-    /** @var array<int, string> */
-    private array $excluded;
-
     /**
-     * @param  array<int, string>  $characters  Characters to exclude from the pool
+     * @param array<int, string> $excluded Characters to exclude from the pool
      */
-    public function __construct(array $characters)
+    public function __construct(private readonly array $excluded)
     {
-        $this->excluded = $characters;
     }
 
     public function filter(string $pool): string

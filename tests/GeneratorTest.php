@@ -19,7 +19,7 @@ use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 use Myerscode\Utilities\Random\Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class GeneratorTest extends BaseTestSuite
+final class GeneratorTest extends BaseTestSuite
 {
     private Generator $generator;
 
@@ -81,14 +81,12 @@ class GeneratorTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[ABC]+$/', $result);
     }
 
-    /** @return array<string, array{int, int, string, int}> */
-    public static function chunkConfigProvider(): array
+    /** @return \Iterator<string, array{int, int, string, int}> */
+    public static function chunkConfigProvider(): \Iterator
     {
-        return [
-            'single chunk no spacer' => [4, 1, '', 4],
-            'two chunks with dash' => [3, 2, '-', 7],
-            'three chunks with space' => [2, 3, ' ', 8],
-        ];
+        yield 'single chunk no spacer' => [4, 1, '', 4];
+        yield 'two chunks with dash' => [3, 2, '-', 7];
+        yield 'three chunks with space' => [2, 3, ' ', 8];
     }
 
     #[DataProvider('chunkConfigProvider')]
@@ -163,7 +161,7 @@ class GeneratorTest extends BaseTestSuite
 
     public function testValidationThresholdThrowsException(): void
     {
-        $this->generator->setConstraints([new RegexConstraint('/^[0-9]+$/')]);
+        $this->generator->setConstraints([new RegexConstraint('/^\d+$/')]);
         $this->generator->setPool('ABC');
 
         $this->expectException(ValidationThresholdReachedException::class);

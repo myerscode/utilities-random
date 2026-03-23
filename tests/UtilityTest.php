@@ -15,7 +15,7 @@ use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 use Myerscode\Utilities\Random\Utility;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class UtilityTest extends BaseTestSuite
+final class UtilityTest extends BaseTestSuite
 {
     /** @return array<string, array{string}> */
     public static function driverClassProvider(): array
@@ -35,8 +35,8 @@ class UtilityTest extends BaseTestSuite
 
     public function testConstructorWithDriverInstance(): void
     {
-        $driver = new AlphaNumericDriver();
-        $utility = new Utility($driver);
+        $alphaNumericDriver = new AlphaNumericDriver();
+        $utility = new Utility($alphaNumericDriver);
         $this->assertInstanceOf(Utility::class, $utility);
     }
 
@@ -149,6 +149,7 @@ class UtilityTest extends BaseTestSuite
     {
         $utility = new Utility(AlphaNumericDriver::class);
         $utility->seed();
+
         $result = $utility->generate();
         $this->assertNotEmpty($result);
     }
