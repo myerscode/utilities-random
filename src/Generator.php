@@ -18,6 +18,9 @@ class Generator
 
     private int $poolLength;
 
+    /** @var array<int, string> Pre-computed pool as array for faster indexed lookup */
+    private array $poolArray = [];
+
     /** @var array<int, PoolConstraint> */
     private array $poolConstraints = [];
 
@@ -31,6 +34,12 @@ class Generator
      * Reset to false whenever pool or constraints change.
      */
     private bool $satisfiabilityChecked = false;
+
+    /**
+     * Cached rejection threshold: highest multiple of poolLength that fits in a byte.
+     * Bytes >= this value are discarded to avoid modulo bias.
+     */
+    private int $poolThreshold = 256;
 
     public function __construct(protected readonly RandomDriverInterface $driver)
     {
@@ -51,6 +60,10 @@ class Generator
                 'The character pool is empty after applying pool constraints. Check your driver and constraint combination.',
             );
         }
+
+        // Pre-compute pool array and lookup metadata
+        $this->poolArray = str_split($this->pool);
+        $this->poolThreshold = 256 - (256 % $this->poolLength);
     }
 
     public function getPool(): string
@@ -109,6 +122,12 @@ class Generator
             $this->satisfiabilityChecked = true;
         }
 
+        // Inlined fast path: single chunk, no output constraints
+        // Skips method call overhead for the most common usage pattern
+        if ($numChunks === 1 && $this->outputConstraints === []) {
+            return $this->generateChunk($chunkLength);
+        }
+
         $hasConstraints = $this->outputConstraints !== [];
 
         for ($attempt = 0; $attempt < $this->validationAttempts; $attempt++) {
@@ -131,7 +150,6 @@ class Generator
      */
     private function buildString(int $chunkLength, int $numChunks, string $spacer): string
     {
-        // Single chunk fast path — skip array/implode overhead
         if ($numChunks === 1) {
             return $this->generateChunk($chunkLength);
         }
@@ -147,32 +165,32 @@ class Generator
 
     /**
      * Generate a single chunk of random characters from the pool.
-     * Uses random_bytes() in bulk and maps bytes to pool indices via rejection
-     * sampling — bytes that would cause modulo bias are discarded.
+     * Uses random_bytes() in bulk with pre-cached pool array and rejection threshold.
+     * Bytes above the threshold are discarded to avoid modulo bias.
      */
     private function generateChunk(int $length): string
     {
-        $pool = $this->pool;
+        $poolArray = $this->poolArray;
         $poolLength = $this->poolLength;
+        $threshold = $this->poolThreshold;
 
-        // Rejection threshold: largest multiple of poolLength that fits in a byte.
-        // Bytes >= this value are discarded to eliminate modulo bias.
-        $threshold = 256 - (256 % $poolLength);
+        // Over-request to cover expected rejections in one pass
+        $requestSize = max(1, (int) ceil($length * 256 / $threshold) + 8);
 
-        $result = '';
-        $remaining = $length;
+        $result = str_repeat("\0", $length);
+        $pos = 0;
 
-        while ($remaining > 0) {
-            // Request extra bytes to account for rejections
-            $bytes = random_bytes($remaining + 16);
-            $byteCount = strlen($bytes);
+        while ($pos < $length) {
+            $values = unpack('C*', random_bytes($requestSize));
+            /** @var array<int, int> $values */
 
-            for ($i = 0; $i < $byteCount && $remaining > 0; $i++) {
-                $byte = ord($bytes[$i]);
-
+            foreach ($values as $byte) {
                 if ($byte < $threshold) {
-                    $result .= $pool[$byte % $poolLength];
-                    $remaining--;
+                    $result[$pos++] = $poolArray[$byte % $poolLength];
+
+                    if ($pos === $length) {
+                        break;
+                    }
                 }
             }
         }
