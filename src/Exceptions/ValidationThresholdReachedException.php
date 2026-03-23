@@ -6,4 +6,6 @@ namespace Myerscode\Utilities\Random\Exceptions;
 
 use Exception;
 
-class ValidationThresholdReachedException extends Exception {}
+class ValidationThresholdReachedException extends Exception
+{
+}

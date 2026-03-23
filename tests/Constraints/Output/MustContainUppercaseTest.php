@@ -9,10 +9,22 @@ use Tests\BaseTestSuite;
 
 final class MustContainUppercaseTest extends BaseTestSuite
 {
-    public function testPassesWithDefaultMinimum(): void
+    public function testDoesNotCountLowercase(): void
+    {
+        $mustContainUppercase = new MustContainUppercase(2);
+        $this->assertFalse($mustContainUppercase->passes('Aabcde'));
+    }
+
+    public function testFailsWhenBelowCustomMinimum(): void
+    {
+        $mustContainUppercase = new MustContainUppercase(3);
+        $this->assertFalse($mustContainUppercase->passes('ABcdef'));
+    }
+
+    public function testFailsWithEmptyString(): void
     {
         $mustContainUppercase = new MustContainUppercase();
-        $this->assertTrue($mustContainUppercase->passes('abcD'));
+        $this->assertFalse($mustContainUppercase->passes(''));
     }
 
     public function testFailsWithNoUppercase(): void
@@ -26,22 +38,9 @@ final class MustContainUppercaseTest extends BaseTestSuite
         $mustContainUppercase = new MustContainUppercase(3);
         $this->assertTrue($mustContainUppercase->passes('ABCdef'));
     }
-
-    public function testFailsWhenBelowCustomMinimum(): void
-    {
-        $mustContainUppercase = new MustContainUppercase(3);
-        $this->assertFalse($mustContainUppercase->passes('ABcdef'));
-    }
-
-    public function testDoesNotCountLowercase(): void
-    {
-        $mustContainUppercase = new MustContainUppercase(2);
-        $this->assertFalse($mustContainUppercase->passes('Aabcde'));
-    }
-
-    public function testFailsWithEmptyString(): void
+    public function testPassesWithDefaultMinimum(): void
     {
         $mustContainUppercase = new MustContainUppercase();
-        $this->assertFalse($mustContainUppercase->passes(''));
+        $this->assertTrue($mustContainUppercase->passes('abcD'));
     }
 }

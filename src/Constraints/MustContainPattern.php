@@ -9,7 +9,9 @@ namespace Myerscode\Utilities\Random\Constraints;
  */
 abstract class MustContainPattern implements OutputConstraint
 {
-    public function __construct(private readonly int $minimum = 1) {}
+    public function __construct(private readonly int $minimum = 1)
+    {
+    }
 
     /**
      * The regex pattern that characters must match.
@@ -19,15 +21,6 @@ abstract class MustContainPattern implements OutputConstraint
     abstract protected function pattern(): string;
 
     /**
-     * Check the generated string contains at least the minimum number
-     * of characters matching the pattern.
-     */
-    public function passes(string $value): bool
-    {
-        return preg_match_all($this->pattern(), $value) >= $this->minimum;
-    }
-
-    /**
      * Check the pool contains at least one character matching the pattern.
      * If the pool has no matching characters, this constraint can never pass
      * regardless of how many times we retry generation.
@@ -35,5 +28,14 @@ abstract class MustContainPattern implements OutputConstraint
     public function canBeSatisfiedBy(string $pool, int $length): bool
     {
         return (bool) preg_match($this->pattern(), $pool);
+    }
+
+    /**
+     * Check the generated string contains at least the minimum number
+     * of characters matching the pattern.
+     */
+    public function passes(string $value): bool
+    {
+        return preg_match_all($this->pattern(), $value) >= $this->minimum;
     }
 }

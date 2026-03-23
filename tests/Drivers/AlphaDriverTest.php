@@ -16,16 +16,16 @@ final class AlphaDriverTest extends BaseTestSuite
         $this->alphaDriver = new AlphaDriver();
     }
 
-    public function testDigestContainsOnlyAlphaCharacters(): void
-    {
-        $seed = $this->alphaDriver->digest();
-        $this->assertMatchesRegularExpression('/^[a-zA-Z]+$/', $seed);
-    }
-
     public function testDigestContainsExpectedLength(): void
     {
         $digest = $this->alphaDriver->digest();
         $this->assertSame(52, strlen($digest));
+    }
+
+    public function testDigestContainsOnlyAlphaCharacters(): void
+    {
+        $seed = $this->alphaDriver->digest();
+        $this->assertMatchesRegularExpression('/^[a-zA-Z]+$/', $seed);
     }
 
     public function testSeedRegeneratesDigest(): void

@@ -16,16 +16,16 @@ final class NumericDriverTest extends BaseTestSuite
         $this->numericDriver = new NumericDriver();
     }
 
-    public function testDigestContainsOnlyNumericCharacters(): void
-    {
-        $seed = $this->numericDriver->digest();
-        $this->assertMatchesRegularExpression('/^\d+$/', $seed);
-    }
-
     public function testDigestContainsExpectedLength(): void
     {
         $digest = $this->numericDriver->digest();
         $this->assertSame(50, strlen($digest));
+    }
+
+    public function testDigestContainsOnlyNumericCharacters(): void
+    {
+        $seed = $this->numericDriver->digest();
+        $this->assertMatchesRegularExpression('/^\d+$/', $seed);
     }
 
     public function testSeedRegeneratesDigest(): void

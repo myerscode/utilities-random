@@ -9,10 +9,35 @@ use Tests\BaseTestSuite;
 
 final class NoSequentialCharactersTest extends BaseTestSuite
 {
+    public function testCustomLengthDetectsLongerSequences(): void
+    {
+        $noSequentialCharacters = new NoSequentialCharacters(4);
+        $this->assertTrue($noSequentialCharacters->passes('xabcx'));
+        $this->assertFalse($noSequentialCharacters->passes('xabcdx'));
+    }
+
+    public function testCustomLengthOfTwoIsSensitive(): void
+    {
+        $noSequentialCharacters = new NoSequentialCharacters(2);
+        $this->assertFalse($noSequentialCharacters->passes('xabx'));
+        $this->assertTrue($noSequentialCharacters->passes('xacx'));
+    }
+
+    public function testFailsWithAscendingDigits(): void
+    {
+        $noSequentialCharacters = new NoSequentialCharacters();
+        $this->assertFalse($noSequentialCharacters->passes('x123x'));
+    }
     public function testFailsWithAscendingLetters(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters();
         $this->assertFalse($noSequentialCharacters->passes('xabcx'));
+    }
+
+    public function testFailsWithDescendingDigits(): void
+    {
+        $noSequentialCharacters = new NoSequentialCharacters();
+        $this->assertFalse($noSequentialCharacters->passes('x321x'));
     }
 
     public function testFailsWithDescendingLetters(): void
@@ -21,16 +46,10 @@ final class NoSequentialCharactersTest extends BaseTestSuite
         $this->assertFalse($noSequentialCharacters->passes('xcbax'));
     }
 
-    public function testFailsWithAscendingDigits(): void
+    public function testPassesWithEmptyString(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters();
-        $this->assertFalse($noSequentialCharacters->passes('x123x'));
-    }
-
-    public function testFailsWithDescendingDigits(): void
-    {
-        $noSequentialCharacters = new NoSequentialCharacters();
-        $this->assertFalse($noSequentialCharacters->passes('x321x'));
+        $this->assertTrue($noSequentialCharacters->passes(''));
     }
 
     public function testPassesWithNonSequentialCharacters(): void
@@ -51,35 +70,15 @@ final class NoSequentialCharactersTest extends BaseTestSuite
         $this->assertTrue($noSequentialCharacters->passes('ab'));
     }
 
-    public function testPassesWithEmptyString(): void
+    public function testSequenceAtEndOfString(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters();
-        $this->assertTrue($noSequentialCharacters->passes(''));
-    }
-
-    public function testCustomLengthDetectsLongerSequences(): void
-    {
-        $noSequentialCharacters = new NoSequentialCharacters(4);
-        $this->assertTrue($noSequentialCharacters->passes('xabcx'));
-        $this->assertFalse($noSequentialCharacters->passes('xabcdx'));
-    }
-
-    public function testCustomLengthOfTwoIsSensitive(): void
-    {
-        $noSequentialCharacters = new NoSequentialCharacters(2);
-        $this->assertFalse($noSequentialCharacters->passes('xabx'));
-        $this->assertTrue($noSequentialCharacters->passes('xacx'));
+        $this->assertFalse($noSequentialCharacters->passes('xyzabc'));
     }
 
     public function testSequenceAtStartOfString(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters();
         $this->assertFalse($noSequentialCharacters->passes('abcxyz'));
-    }
-
-    public function testSequenceAtEndOfString(): void
-    {
-        $noSequentialCharacters = new NoSequentialCharacters();
-        $this->assertFalse($noSequentialCharacters->passes('xyzabc'));
     }
 }

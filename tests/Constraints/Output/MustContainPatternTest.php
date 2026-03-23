@@ -11,16 +11,26 @@ use Tests\BaseTestSuite;
 
 final class MustContainPatternTest extends BaseTestSuite
 {
+    public function testCanBeSatisfiedByReturnsFalseWhenPoolLacksMatch(): void
+    {
+        $mustContainDigit = new MustContainDigit();
+        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('abcdef', 5));
+    }
     public function testCanBeSatisfiedByReturnsTrueWhenPoolContainsMatch(): void
     {
         $mustContainDigit = new MustContainDigit();
         $this->assertTrue($mustContainDigit->canBeSatisfiedBy('abc123', 5));
     }
 
-    public function testCanBeSatisfiedByReturnsFalseWhenPoolLacksMatch(): void
+    public function testCanBeSatisfiedByWithEmptyPool(): void
     {
         $mustContainDigit = new MustContainDigit();
-        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('abcdef', 5));
+        $mustContainLetter = new MustContainLetter();
+        $mustContainUppercase = new MustContainUppercase();
+
+        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('', 5));
+        $this->assertFalse($mustContainLetter->canBeSatisfiedBy('', 5));
+        $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('', 5));
     }
 
     public function testMustContainLetterCanBeSatisfied(): void
@@ -35,16 +45,5 @@ final class MustContainPatternTest extends BaseTestSuite
         $mustContainUppercase = new MustContainUppercase();
         $this->assertTrue($mustContainUppercase->canBeSatisfiedBy('abcA', 5));
         $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('abcdef', 5));
-    }
-
-    public function testCanBeSatisfiedByWithEmptyPool(): void
-    {
-        $mustContainDigit = new MustContainDigit();
-        $mustContainLetter = new MustContainLetter();
-        $mustContainUppercase = new MustContainUppercase();
-
-        $this->assertFalse($mustContainDigit->canBeSatisfiedBy('', 5));
-        $this->assertFalse($mustContainLetter->canBeSatisfiedBy('', 5));
-        $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('', 5));
     }
 }

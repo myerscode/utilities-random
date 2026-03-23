@@ -16,10 +16,10 @@ final class ExcludeSimilarCharactersTest extends BaseTestSuite
         $this->excludeSimilarCharacters = new ExcludeSimilarCharacters();
     }
 
-    public function testRemovesSimilarCharactersFromPool(): void
+    public function testHandlesEmptyPool(): void
     {
-        $filtered = $this->excludeSimilarCharacters->filter('abcOo0I1lxyz');
-        $this->assertSame('abcxyz', $filtered);
+        $filtered = $this->excludeSimilarCharacters->filter('');
+        $this->assertSame('', $filtered);
     }
 
     public function testLeavesPoolIntactWhenNoSimilarCharacters(): void
@@ -28,15 +28,15 @@ final class ExcludeSimilarCharactersTest extends BaseTestSuite
         $this->assertSame('abcdef', $filtered);
     }
 
-    public function testHandlesEmptyPool(): void
-    {
-        $filtered = $this->excludeSimilarCharacters->filter('');
-        $this->assertSame('', $filtered);
-    }
-
     public function testRemovesAllWhenPoolIsOnlySimilarCharacters(): void
     {
         $filtered = $this->excludeSimilarCharacters->filter('oO0I1l');
         $this->assertSame('', $filtered);
+    }
+
+    public function testRemovesSimilarCharactersFromPool(): void
+    {
+        $filtered = $this->excludeSimilarCharacters->filter('abcOo0I1lxyz');
+        $this->assertSame('abcxyz', $filtered);
     }
 }

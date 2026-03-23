@@ -9,10 +9,22 @@ use Tests\BaseTestSuite;
 
 final class MustContainLetterTest extends BaseTestSuite
 {
-    public function testPassesWithDefaultMinimum(): void
+    public function testCountsBothCases(): void
+    {
+        $mustContainLetter = new MustContainLetter(4);
+        $this->assertTrue($mustContainLetter->passes('AaBb'));
+    }
+
+    public function testFailsWhenBelowCustomMinimum(): void
+    {
+        $mustContainLetter = new MustContainLetter(3);
+        $this->assertFalse($mustContainLetter->passes('a1b23'));
+    }
+
+    public function testFailsWithEmptyString(): void
     {
         $mustContainLetter = new MustContainLetter();
-        $this->assertTrue($mustContainLetter->passes('1a23'));
+        $this->assertFalse($mustContainLetter->passes(''));
     }
 
     public function testFailsWithNoLetters(): void
@@ -26,22 +38,9 @@ final class MustContainLetterTest extends BaseTestSuite
         $mustContainLetter = new MustContainLetter(3);
         $this->assertTrue($mustContainLetter->passes('a1b2c'));
     }
-
-    public function testFailsWhenBelowCustomMinimum(): void
-    {
-        $mustContainLetter = new MustContainLetter(3);
-        $this->assertFalse($mustContainLetter->passes('a1b23'));
-    }
-
-    public function testCountsBothCases(): void
-    {
-        $mustContainLetter = new MustContainLetter(4);
-        $this->assertTrue($mustContainLetter->passes('AaBb'));
-    }
-
-    public function testFailsWithEmptyString(): void
+    public function testPassesWithDefaultMinimum(): void
     {
         $mustContainLetter = new MustContainLetter();
-        $this->assertFalse($mustContainLetter->passes(''));
+        $this->assertTrue($mustContainLetter->passes('1a23'));
     }
 }

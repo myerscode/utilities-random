@@ -16,16 +16,16 @@ final class BinaryDriverTest extends BaseTestSuite
         $this->binaryDriver = new BinaryDriver();
     }
 
-    public function testDigestContainsOnlyBinaryCharacters(): void
-    {
-        $seed = $this->binaryDriver->digest();
-        $this->assertMatchesRegularExpression('/^[01]+$/', $seed);
-    }
-
     public function testDigestContainsExpectedLength(): void
     {
         $digest = $this->binaryDriver->digest();
         $this->assertSame(50, strlen($digest));
+    }
+
+    public function testDigestContainsOnlyBinaryCharacters(): void
+    {
+        $seed = $this->binaryDriver->digest();
+        $this->assertMatchesRegularExpression('/^[01]+$/', $seed);
     }
 
     public function testSeedRegeneratesDigest(): void

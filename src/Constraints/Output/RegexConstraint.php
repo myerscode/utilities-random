@@ -11,11 +11,8 @@ use Myerscode\Utilities\Random\Constraints\OutputConstraint;
  */
 class RegexConstraint implements OutputConstraint
 {
-    public function __construct(private readonly string $pattern) {}
-
-    public function passes(string $value): bool
+    public function __construct(private readonly string $pattern)
     {
-        return (bool) preg_match($this->pattern, $value);
     }
 
     /**
@@ -25,5 +22,10 @@ class RegexConstraint implements OutputConstraint
     public function canBeSatisfiedBy(string $pool, int $length): bool
     {
         return true;
+    }
+
+    public function passes(string $value): bool
+    {
+        return (bool) preg_match($this->pattern, $value);
     }
 }

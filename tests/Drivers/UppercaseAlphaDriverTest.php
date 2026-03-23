@@ -16,16 +16,16 @@ final class UppercaseAlphaDriverTest extends BaseTestSuite
         $this->uppercaseAlphaDriver = new UppercaseAlphaDriver();
     }
 
-    public function testDigestContainsOnlyUppercaseCharacters(): void
-    {
-        $seed = $this->uppercaseAlphaDriver->digest();
-        $this->assertMatchesRegularExpression('/^[A-Z]+$/', $seed);
-    }
-
     public function testDigestContainsExpectedLength(): void
     {
         $digest = $this->uppercaseAlphaDriver->digest();
         $this->assertSame(52, strlen($digest));
+    }
+
+    public function testDigestContainsOnlyUppercaseCharacters(): void
+    {
+        $seed = $this->uppercaseAlphaDriver->digest();
+        $this->assertMatchesRegularExpression('/^[A-Z]+$/', $seed);
     }
 
     public function testSeedRegeneratesDigest(): void

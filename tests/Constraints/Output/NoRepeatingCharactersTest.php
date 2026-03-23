@@ -16,39 +16,14 @@ final class NoRepeatingCharactersTest extends BaseTestSuite
         $this->noRepeatingCharacters = new NoRepeatingCharacters();
     }
 
-    public function testPassesWithNoRepeats(): void
+    public function testCanBeSatisfiedByFailsWithSingleChar(): void
     {
-        $this->assertTrue($this->noRepeatingCharacters->passes('abcdef'));
+        $this->assertFalse($this->noRepeatingCharacters->canBeSatisfiedBy('AAAA', 5));
     }
 
-    public function testFailsWithConsecutiveRepeats(): void
+    public function testCanBeSatisfiedByPassesWithSingleCharPoolAndLengthOne(): void
     {
-        $this->assertFalse($this->noRepeatingCharacters->passes('aabcde'));
-    }
-
-    public function testFailsWithRepeatsInMiddle(): void
-    {
-        $this->assertFalse($this->noRepeatingCharacters->passes('abccde'));
-    }
-
-    public function testFailsWithRepeatsAtEnd(): void
-    {
-        $this->assertFalse($this->noRepeatingCharacters->passes('abcdee'));
-    }
-
-    public function testPassesWithSingleCharacter(): void
-    {
-        $this->assertTrue($this->noRepeatingCharacters->passes('a'));
-    }
-
-    public function testPassesWithEmptyString(): void
-    {
-        $this->assertTrue($this->noRepeatingCharacters->passes(''));
-    }
-
-    public function testPassesWithAlternatingCharacters(): void
-    {
-        $this->assertTrue($this->noRepeatingCharacters->passes('ababab'));
+        $this->assertTrue($this->noRepeatingCharacters->canBeSatisfiedBy('AAAA', 1));
     }
 
     public function testCanBeSatisfiedByWithMultipleDistinctChars(): void
@@ -56,18 +31,43 @@ final class NoRepeatingCharactersTest extends BaseTestSuite
         $this->assertTrue($this->noRepeatingCharacters->canBeSatisfiedBy('abcdef', 5));
     }
 
-    public function testCanBeSatisfiedByFailsWithSingleChar(): void
-    {
-        $this->assertFalse($this->noRepeatingCharacters->canBeSatisfiedBy('AAAA', 5));
-    }
-
     public function testCanBeSatisfiedByWithTwoDistinctChars(): void
     {
         $this->assertTrue($this->noRepeatingCharacters->canBeSatisfiedBy('ababab', 5));
     }
 
-    public function testCanBeSatisfiedByPassesWithSingleCharPoolAndLengthOne(): void
+    public function testFailsWithConsecutiveRepeats(): void
     {
-        $this->assertTrue($this->noRepeatingCharacters->canBeSatisfiedBy('AAAA', 1));
+        $this->assertFalse($this->noRepeatingCharacters->passes('aabcde'));
+    }
+
+    public function testFailsWithRepeatsAtEnd(): void
+    {
+        $this->assertFalse($this->noRepeatingCharacters->passes('abcdee'));
+    }
+
+    public function testFailsWithRepeatsInMiddle(): void
+    {
+        $this->assertFalse($this->noRepeatingCharacters->passes('abccde'));
+    }
+
+    public function testPassesWithAlternatingCharacters(): void
+    {
+        $this->assertTrue($this->noRepeatingCharacters->passes('ababab'));
+    }
+
+    public function testPassesWithEmptyString(): void
+    {
+        $this->assertTrue($this->noRepeatingCharacters->passes(''));
+    }
+
+    public function testPassesWithNoRepeats(): void
+    {
+        $this->assertTrue($this->noRepeatingCharacters->passes('abcdef'));
+    }
+
+    public function testPassesWithSingleCharacter(): void
+    {
+        $this->assertTrue($this->noRepeatingCharacters->passes('a'));
     }
 }

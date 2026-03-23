@@ -11,7 +11,18 @@ use Myerscode\Utilities\Random\Constraints\OutputConstraint;
  */
 class NoSequentialCharacters implements OutputConstraint
 {
-    public function __construct(private readonly int $length = 3) {}
+    public function __construct(private readonly int $length = 3)
+    {
+    }
+
+    /**
+     * Sequential detection depends on output ordering, not pool contents,
+     * so this always returns true — we can't predict it upfront.
+     */
+    public function canBeSatisfiedBy(string $pool, int $length): bool
+    {
+        return true;
+    }
 
     public function passes(string $value): bool
     {
@@ -27,15 +38,6 @@ class NoSequentialCharacters implements OutputConstraint
             }
         }
 
-        return true;
-    }
-
-    /**
-     * Sequential detection depends on output ordering, not pool contents,
-     * so this always returns true — we can't predict it upfront.
-     */
-    public function canBeSatisfiedBy(string $pool, int $length): bool
-    {
         return true;
     }
 

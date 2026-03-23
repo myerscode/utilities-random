@@ -6,4 +6,6 @@ namespace Myerscode\Utilities\Random\Exceptions;
 
 use Exception;
 
-class EmptyPoolException extends Exception {}
+class EmptyPoolException extends Exception
+{
+}

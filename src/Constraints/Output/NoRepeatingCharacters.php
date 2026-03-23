@@ -11,19 +11,6 @@ use Myerscode\Utilities\Random\Constraints\OutputConstraint;
  */
 class NoRepeatingCharacters implements OutputConstraint
 {
-    public function passes(string $value): bool
-    {
-        $length = strlen($value);
-
-        for ($i = 1; $i < $length; $i++) {
-            if ($value[$i] === $value[$i - 1]) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * For length 1, any pool works since there are no adjacent characters.
      * For length 2+, the pool needs at least 2 distinct characters, otherwise
@@ -36,5 +23,17 @@ class NoRepeatingCharacters implements OutputConstraint
         }
 
         return count(array_unique(str_split($pool))) >= 2;
+    }
+    public function passes(string $value): bool
+    {
+        $length = strlen($value);
+
+        for ($i = 1; $i < $length; $i++) {
+            if ($value[$i] === $value[$i - 1]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

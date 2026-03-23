@@ -9,16 +9,21 @@ use Tests\BaseTestSuite;
 
 final class RegexConstraintTest extends BaseTestSuite
 {
+    public function testFailsWhenPatternDoesNotMatch(): void
+    {
+        $regexConstraint = new RegexConstraint('/^[a-z]+$/');
+        $this->assertFalse($regexConstraint->passes('ABC123'));
+    }
     public function testPassesWhenPatternMatches(): void
     {
         $regexConstraint = new RegexConstraint('/^[a-z]+$/');
         $this->assertTrue($regexConstraint->passes('abcdef'));
     }
 
-    public function testFailsWhenPatternDoesNotMatch(): void
+    public function testPassesWithEmptyStringWhenPatternAllows(): void
     {
-        $regexConstraint = new RegexConstraint('/^[a-z]+$/');
-        $this->assertFalse($regexConstraint->passes('ABC123'));
+        $regexConstraint = new RegexConstraint('/^.*$/');
+        $this->assertTrue($regexConstraint->passes(''));
     }
 
     public function testWorksWithDigitPattern(): void
@@ -34,11 +39,5 @@ final class RegexConstraintTest extends BaseTestSuite
         $this->assertTrue($regexConstraint->passes('ABC123'));
         $this->assertFalse($regexConstraint->passes('abc123'));
         $this->assertFalse($regexConstraint->passes('ABCD123'));
-    }
-
-    public function testPassesWithEmptyStringWhenPatternAllows(): void
-    {
-        $regexConstraint = new RegexConstraint('/^.*$/');
-        $this->assertTrue($regexConstraint->passes(''));
     }
 }

@@ -12,22 +12,21 @@ use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 
 class Utility
 {
-    private readonly RandomDriverInterface $randomDriver;
+    private int $chunks = 0;
 
-    private readonly Generator $generator;
+    private int $collisions = 0;
 
     /** @var array<int, string> */
     private array $generated = [];
 
-    private int $collisions = 0;
-
-    private int $uniqueCollisionThreshold = 10;
-
-    private int $chunks = 0;
+    private readonly Generator $generator;
 
     private int $length = 5;
+    private readonly RandomDriverInterface $randomDriver;
 
     private string $spacer = '-';
+
+    private int $uniqueCollisionThreshold = 10;
 
     /**
      * @throws InvalidProviderException
@@ -48,6 +47,18 @@ class Utility
 
         $this->randomDriver = $provider;
         $this->generator = new Generator($this->randomDriver);
+    }
+
+    public function chunks(int $chunks): static
+    {
+        $this->chunks = $chunks;
+
+        return $this;
+    }
+
+    public function collisions(): int
+    {
+        return $this->collisions;
     }
 
     /**
@@ -84,16 +95,12 @@ class Utility
         return $this;
     }
 
-    public function seed(): void
+    public function generate(): string
     {
-        $this->randomDriver->seed();
-    }
+        $random = $this->make();
+        $this->generated[] = $random;
 
-    public function chunks(int $chunks): static
-    {
-        $this->chunks = $chunks;
-
-        return $this;
+        return $random;
     }
 
     public function length(int $length): static
@@ -103,19 +110,29 @@ class Utility
         return $this;
     }
 
+    public function permutations(): int
+    {
+        return strlen((string) $this->randomDriver->digest()) ** $this->length;
+    }
+
+    public function reset(): static
+    {
+        $this->collisions = 0;
+        $this->generated = [];
+
+        return $this;
+    }
+
+    public function seed(): void
+    {
+        $this->randomDriver->seed();
+    }
+
     public function spacer(string $spacer): static
     {
         $this->spacer = $spacer;
 
         return $this;
-    }
-
-    public function generate(): string
-    {
-        $random = $this->make();
-        $this->generated[] = $random;
-
-        return $random;
     }
 
     /**
@@ -138,24 +155,6 @@ class Utility
         throw new UniqueThresholdReachedException(
             sprintf('Maximum attempts (%s) at creating a new unique value reached', $this->uniqueCollisionThreshold),
         );
-    }
-
-    public function collisions(): int
-    {
-        return $this->collisions;
-    }
-
-    public function reset(): static
-    {
-        $this->collisions = 0;
-        $this->generated = [];
-
-        return $this;
-    }
-
-    public function permutations(): int
-    {
-        return strlen((string) $this->randomDriver->digest()) ** $this->length;
     }
 
     private function make(): string

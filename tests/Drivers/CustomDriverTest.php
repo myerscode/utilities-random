@@ -34,16 +34,6 @@ final class CustomDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[ab]+$/', $second);
     }
 
-    public function testWorksWithUtility(): void
-    {
-        $customDriver = new CustomDriver(['1', '2', '3']);
-        $utility = new Utility($customDriver);
-        $result = $utility->length(10)->generate();
-
-        $this->assertSame(10, strlen($result));
-        $this->assertMatchesRegularExpression('/^[123]+$/', $result);
-    }
-
     public function testWorksWithSingleCharacter(): void
     {
         $customDriver = new CustomDriver(['A']);
@@ -55,5 +45,15 @@ final class CustomDriverTest extends BaseTestSuite
         $customDriver = new CustomDriver(['!', '@', '#', '$']);
         $seed = $customDriver->digest();
         $this->assertMatchesRegularExpression('/^[!@#$]+$/', $seed);
+    }
+
+    public function testWorksWithUtility(): void
+    {
+        $customDriver = new CustomDriver(['1', '2', '3']);
+        $utility = new Utility($customDriver);
+        $result = $utility->length(10)->generate();
+
+        $this->assertSame(10, strlen($result));
+        $this->assertMatchesRegularExpression('/^[123]+$/', $result);
     }
 }

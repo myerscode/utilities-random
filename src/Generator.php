@@ -14,9 +14,9 @@ use Myerscode\Utilities\Random\Exceptions\ValidationThresholdReachedException;
 
 class Generator
 {
+    /** @var array<int, OutputConstraint> */
+    private array $outputConstraints = [];
     private string $pool;
-
-    private int $poolLength;
 
     /** @var array<int, string> Pre-computed pool as array for faster indexed lookup */
     private array $poolArray = [];
@@ -24,16 +24,7 @@ class Generator
     /** @var array<int, PoolConstraint> */
     private array $poolConstraints = [];
 
-    /** @var array<int, OutputConstraint> */
-    private array $outputConstraints = [];
-
-    private int $validationAttempts = 100;
-
-    /**
-     * Whether the satisfiability check has passed for the current pool/constraints.
-     * Reset to false whenever pool or constraints change.
-     */
-    private bool $satisfiabilityChecked = false;
+    private int $poolLength;
 
     /**
      * Cached rejection threshold: highest multiple of poolLength that fits in a byte.
@@ -41,56 +32,16 @@ class Generator
      */
     private int $poolThreshold = 256;
 
+    /**
+     * Whether the satisfiability check has passed for the current pool/constraints.
+     * Reset to false whenever pool or constraints change.
+     */
+    private bool $satisfiabilityChecked = false;
+
+    private int $validationAttempts = 100;
+
     public function __construct(protected readonly RandomDriverInterface $driver)
     {
-        $this->setPool($this->driver->digest());
-    }
-
-    /**
-     * @throws EmptyPoolException
-     */
-    public function setPool(string $pool): void
-    {
-        $this->pool = $this->applyPoolConstraints($pool);
-        $this->poolLength = strlen($this->pool);
-        $this->satisfiabilityChecked = false;
-
-        if ($this->poolLength === 0) {
-            throw new EmptyPoolException(
-                'The character pool is empty after applying pool constraints. Check your driver and constraint combination.',
-            );
-        }
-
-        // Pre-compute pool array and lookup metadata
-        $this->poolArray = str_split($this->pool);
-        $this->poolThreshold = 256 - (256 % $this->poolLength);
-    }
-
-    public function getPool(): string
-    {
-        return $this->pool;
-    }
-
-    /**
-     * @param  array<int, ConstraintInterface>  $constraints
-     *
-     * @throws EmptyPoolException
-     */
-    public function setConstraints(array $constraints): void
-    {
-        $this->poolConstraints = [];
-        $this->outputConstraints = [];
-
-        foreach ($constraints as $constraint) {
-            if ($constraint instanceof PoolConstraint) {
-                $this->poolConstraints[] = $constraint;
-            }
-
-            if ($constraint instanceof OutputConstraint) {
-                $this->outputConstraints[] = $constraint;
-            }
-        }
-
         $this->setPool($this->driver->digest());
     }
 
@@ -100,6 +51,11 @@ class Generator
     public function getConstraints(): array
     {
         return [...$this->poolConstraints, ...$this->outputConstraints];
+    }
+
+    public function getPool(): string
+    {
+        return $this->pool;
     }
 
     /**
@@ -141,6 +97,58 @@ class Generator
         throw new ValidationThresholdReachedException(
             sprintf('Maximum attempts (%s) at generating a valid string reached', $this->validationAttempts),
         );
+    }
+
+    /**
+     * @param  array<int, ConstraintInterface>  $constraints
+     *
+     * @throws EmptyPoolException
+     */
+    public function setConstraints(array $constraints): void
+    {
+        $this->poolConstraints = [];
+        $this->outputConstraints = [];
+
+        foreach ($constraints as $constraint) {
+            if ($constraint instanceof PoolConstraint) {
+                $this->poolConstraints[] = $constraint;
+            }
+
+            if ($constraint instanceof OutputConstraint) {
+                $this->outputConstraints[] = $constraint;
+            }
+        }
+
+        $this->setPool($this->driver->digest());
+    }
+
+    /**
+     * @throws EmptyPoolException
+     */
+    public function setPool(string $pool): void
+    {
+        $this->pool = $this->applyPoolConstraints($pool);
+        $this->poolLength = strlen($this->pool);
+        $this->satisfiabilityChecked = false;
+
+        if ($this->poolLength === 0) {
+            throw new EmptyPoolException(
+                'The character pool is empty after applying pool constraints. Check your driver and constraint combination.',
+            );
+        }
+
+        // Pre-compute pool array and lookup metadata
+        $this->poolArray = str_split($this->pool);
+        $this->poolThreshold = 256 - (256 % $this->poolLength);
+    }
+
+    private function applyPoolConstraints(string $pool): string
+    {
+        foreach ($this->poolConstraints as $poolConstraint) {
+            $pool = $poolConstraint->filter($pool);
+        }
+
+        return $pool;
     }
 
     /**
@@ -200,16 +208,7 @@ class Generator
 
     private function passesOutputConstraints(string $value): bool
     {
-        return array_all($this->outputConstraints, fn($constraint) => $constraint->passes($value));
-    }
-
-    private function applyPoolConstraints(string $pool): string
-    {
-        foreach ($this->poolConstraints as $poolConstraint) {
-            $pool = $poolConstraint->filter($pool);
-        }
-
-        return $pool;
+        return array_all($this->outputConstraints, fn ($constraint) => $constraint->passes($value));
     }
 
     /**

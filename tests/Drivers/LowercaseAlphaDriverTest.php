@@ -16,16 +16,16 @@ final class LowercaseAlphaDriverTest extends BaseTestSuite
         $this->lowercaseAlphaDriver = new LowercaseAlphaDriver();
     }
 
-    public function testDigestContainsOnlyLowercaseCharacters(): void
-    {
-        $seed = $this->lowercaseAlphaDriver->digest();
-        $this->assertMatchesRegularExpression('/^[a-z]+$/', $seed);
-    }
-
     public function testDigestContainsExpectedLength(): void
     {
         $digest = $this->lowercaseAlphaDriver->digest();
         $this->assertSame(52, strlen($digest));
+    }
+
+    public function testDigestContainsOnlyLowercaseCharacters(): void
+    {
+        $seed = $this->lowercaseAlphaDriver->digest();
+        $this->assertMatchesRegularExpression('/^[a-z]+$/', $seed);
     }
 
     public function testSeedRegeneratesDigest(): void

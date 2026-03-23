@@ -9,10 +9,16 @@ use Tests\BaseTestSuite;
 
 final class MustContainDigitTest extends BaseTestSuite
 {
-    public function testPassesWithDefaultMinimum(): void
+    public function testFailsWhenBelowCustomMinimum(): void
+    {
+        $mustContainDigit = new MustContainDigit(3);
+        $this->assertFalse($mustContainDigit->passes('a1b2cd'));
+    }
+
+    public function testFailsWithEmptyString(): void
     {
         $mustContainDigit = new MustContainDigit();
-        $this->assertTrue($mustContainDigit->passes('abc1'));
+        $this->assertFalse($mustContainDigit->passes(''));
     }
 
     public function testFailsWithNoDigits(): void
@@ -21,27 +27,20 @@ final class MustContainDigitTest extends BaseTestSuite
         $this->assertFalse($mustContainDigit->passes('abcdef'));
     }
 
-    public function testPassesWithCustomMinimum(): void
-    {
-        $mustContainDigit = new MustContainDigit(3);
-        $this->assertTrue($mustContainDigit->passes('a1b2c3'));
-    }
-
-    public function testFailsWhenBelowCustomMinimum(): void
-    {
-        $mustContainDigit = new MustContainDigit(3);
-        $this->assertFalse($mustContainDigit->passes('a1b2cd'));
-    }
-
     public function testPassesWithAllDigits(): void
     {
         $mustContainDigit = new MustContainDigit(5);
         $this->assertTrue($mustContainDigit->passes('12345'));
     }
 
-    public function testFailsWithEmptyString(): void
+    public function testPassesWithCustomMinimum(): void
+    {
+        $mustContainDigit = new MustContainDigit(3);
+        $this->assertTrue($mustContainDigit->passes('a1b2c3'));
+    }
+    public function testPassesWithDefaultMinimum(): void
     {
         $mustContainDigit = new MustContainDigit();
-        $this->assertFalse($mustContainDigit->passes(''));
+        $this->assertTrue($mustContainDigit->passes('abc1'));
     }
 }
