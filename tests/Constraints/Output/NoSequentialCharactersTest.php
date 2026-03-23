@@ -9,6 +9,13 @@ use Tests\BaseTestSuite;
 
 final class NoSequentialCharactersTest extends BaseTestSuite
 {
+    public function testCanBeSatisfiedByAlwaysReturnsTrue(): void
+    {
+        $noSequentialCharacters = new NoSequentialCharacters();
+        $this->assertTrue($noSequentialCharacters->canBeSatisfiedBy('abc', 5));
+        $this->assertTrue($noSequentialCharacters->canBeSatisfiedBy('', 0));
+    }
+
     public function testCustomLengthDetectsLongerSequences(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters(4);
