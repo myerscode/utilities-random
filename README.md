@@ -7,8 +7,9 @@
 [![Latest Stable Version](https://poser.pugx.org/myerscode/utilities-random/v/stable)](https://packagist.org/packages/myerscode/utilities-random)
 [![Total Downloads](https://poser.pugx.org/myerscode/utilities-random/downloads)](https://packagist.org/packages/myerscode/utilities-random)
 [![PHP Version Require](http://poser.pugx.org/myerscode/utilities-random/require/php)](https://packagist.org/packages/myerscode/utilities-random)
-[![License](https://poser.pugx.org/myerscode/utilities-random/license)](https://packagist.org/packages/myerscode/utilities-random)
-![Tests](https://github.com/myerscode/utilities-random/workflows/Tests/badge.svg?branch=main)
+[![License](https://poser.pugx.org/myerscode/utilities-random/license)](https://github.com/myerscode/utilities-random/blob/main/LICENSE)
+[![Tests](https://github.com/myerscode/utilities-random/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/myerscode/utilities-random/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/myerscode/utilities-random/graph/badge.svg)](https://codecov.io/gh/myerscode/utilities-random)
 
 ## Requirements
 
