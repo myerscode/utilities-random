@@ -38,6 +38,7 @@ final class MustContainLetterTest extends BaseTestSuite
         $mustContainLetter = new MustContainLetter(3);
         $this->assertTrue($mustContainLetter->passes('a1b2c'));
     }
+
     public function testPassesWithDefaultMinimum(): void
     {
         $mustContainLetter = new MustContainLetter();

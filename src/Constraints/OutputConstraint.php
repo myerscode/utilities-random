@@ -15,6 +15,7 @@ interface OutputConstraint extends ConstraintInterface
      * generation begins.
      */
     public function canBeSatisfiedBy(string $pool, int $length): bool;
+
     /**
      * Return true if the generated string passes validation.
      */

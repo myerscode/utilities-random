@@ -22,6 +22,7 @@ class Utility
     private readonly Generator $generator;
 
     private int $length = 5;
+
     private readonly RandomDriverInterface $randomDriver;
 
     private string $spacer = '-';
@@ -112,7 +113,7 @@ class Utility
 
     public function permutations(): int
     {
-        return strlen((string) $this->randomDriver->digest()) ** $this->length;
+        return strlen($this->randomDriver->digest()) ** $this->length;
     }
 
     public function reset(): static

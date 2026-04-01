@@ -35,6 +35,7 @@ final class NoSequentialCharactersTest extends BaseTestSuite
         $noSequentialCharacters = new NoSequentialCharacters();
         $this->assertFalse($noSequentialCharacters->passes('x123x'));
     }
+
     public function testFailsWithAscendingLetters(): void
     {
         $noSequentialCharacters = new NoSequentialCharacters();

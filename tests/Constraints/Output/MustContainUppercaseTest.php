@@ -38,6 +38,7 @@ final class MustContainUppercaseTest extends BaseTestSuite
         $mustContainUppercase = new MustContainUppercase(3);
         $this->assertTrue($mustContainUppercase->passes('ABCdef'));
     }
+
     public function testPassesWithDefaultMinimum(): void
     {
         $mustContainUppercase = new MustContainUppercase();

@@ -14,6 +14,7 @@ final class RegexConstraintTest extends BaseTestSuite
         $regexConstraint = new RegexConstraint('/^[a-z]+$/');
         $this->assertFalse($regexConstraint->passes('ABC123'));
     }
+
     public function testPassesWhenPatternMatches(): void
     {
         $regexConstraint = new RegexConstraint('/^[a-z]+$/');

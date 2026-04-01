@@ -38,6 +38,7 @@ final class ExcludeCharactersTest extends BaseTestSuite
         $excludeCharacters = new ExcludeCharacters(['a', 'b']);
         $this->assertSame('', $excludeCharacters->filter('aabb'));
     }
+
     public function testRemovesSpecifiedCharacters(): void
     {
         $excludeCharacters = new ExcludeCharacters(['a', 'b', 'c']);

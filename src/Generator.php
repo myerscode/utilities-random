@@ -16,6 +16,7 @@ class Generator
 {
     /** @var array<int, OutputConstraint> */
     private array $outputConstraints = [];
+
     private string $pool;
 
     /** @var array<int, string> Pre-computed pool as array for faster indexed lookup */

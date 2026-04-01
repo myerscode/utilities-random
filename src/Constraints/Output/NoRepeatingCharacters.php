@@ -24,6 +24,7 @@ class NoRepeatingCharacters implements OutputConstraint
 
         return count(array_unique(str_split($pool))) >= 2;
     }
+
     public function passes(string $value): bool
     {
         $length = strlen($value);

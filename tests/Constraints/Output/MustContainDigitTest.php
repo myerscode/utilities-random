@@ -38,6 +38,7 @@ final class MustContainDigitTest extends BaseTestSuite
         $mustContainDigit = new MustContainDigit(3);
         $this->assertTrue($mustContainDigit->passes('a1b2c3'));
     }
+
     public function testPassesWithDefaultMinimum(): void
     {
         $mustContainDigit = new MustContainDigit();

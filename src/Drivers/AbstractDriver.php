@@ -9,6 +9,7 @@ use Random\RandomException;
 abstract class AbstractDriver
 {
     protected string $digest;
+
     protected int $iterations = 5000;
 
     public function __construct()

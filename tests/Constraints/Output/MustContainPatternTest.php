@@ -16,6 +16,7 @@ final class MustContainPatternTest extends BaseTestSuite
         $mustContainDigit = new MustContainDigit();
         $this->assertFalse($mustContainDigit->canBeSatisfiedBy('abcdef', 5));
     }
+
     public function testCanBeSatisfiedByReturnsTrueWhenPoolContainsMatch(): void
     {
         $mustContainDigit = new MustContainDigit();
