@@ -43,12 +43,11 @@
     }
   },
   "scripts": {
+    "lint": "vendor/bin/pint",
     "analyse": "vendor/bin/phpstan analyse",
-    "lint": "vendor/bin/pint --test",
-    "lint-fix": "vendor/bin/pint",
-    "security-audit": "@composer audit",
     "tests": "vendor/bin/phpunit --testdox --no-coverage --colors=always",
-    "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox --colors=always"
+    "test-coverage": "vendor/bin/phpunit --testdox --colors=always",
+    "security-audit": "@composer audit"
   },
   "config": {
     "sort-packages": true,
