@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Calendar Versioning](https://calver.org/).
 
+## [2026.0.1] - 2026-10-31
+### New Features
+- [`6fe7657`](https://github.com/myerscode/utilities-random/commit/6fe76570268a1dcc96c7e2f3e643efde85170d20) - **ci**: add shared dependabot auto-merge *(PR [#7](https://github.com/myerscode/utilities-random/pull/7) by [@oniice](https://github.com/oniice))*
+
+
 ## Unreleased
 
 ### Added
@@ -24,3 +29,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 - Legacy php.yml workflow (replaced by tests.yml)
+[2026.0.1]: https://github.com/myerscode/utilities-random/compare/2026.0.0...2026.0.1
