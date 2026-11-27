@@ -7,6 +7,7 @@ namespace Myerscode\Utilities\Random;
 use Myerscode\Utilities\Random\Constraints\ConstraintInterface;
 use Myerscode\Utilities\Random\Constraints\OutputConstraint;
 use Myerscode\Utilities\Random\Constraints\PoolConstraint;
+use Myerscode\Utilities\Random\Drivers\CustomDriver;
 use Myerscode\Utilities\Random\Drivers\RandomDriverInterface;
 use Myerscode\Utilities\Random\Exceptions\EmptyPoolException;
 use Myerscode\Utilities\Random\Exceptions\UnsatisfiableConstraintException;
@@ -46,7 +47,7 @@ class Generator
 
     public function __construct(protected readonly RandomDriverInterface $driver)
     {
-        $this->setPool($this->driver->digest());
+        $this->loadDriverPool();
     }
 
     /**
@@ -123,7 +124,7 @@ class Generator
             }
         }
 
-        $this->setPool($this->driver->digest());
+        $this->loadDriverPool();
     }
 
     /**
@@ -131,8 +132,50 @@ class Generator
      */
     public function setPool(string $pool): void
     {
-        $this->pool = $this->applyPoolConstraints($pool);
-        $this->poolLength = strlen($this->pool);
+        $this->applyUnits($this->splitUnits($this->applyPoolConstraints($pool)));
+    }
+
+    /**
+     * Split a pool into characters. UTF-8 pools are split by code point, anything else by byte.
+     *
+     * @return array<int, string>
+     */
+    private function splitUnits(string $pool): array
+    {
+        return $pool !== '' && mb_check_encoding($pool, 'UTF-8') ? mb_str_split($pool) : str_split($pool);
+    }
+
+    /**
+     * Load the driver's pool. A CustomDriver exposes its entries as units so multi-character
+     * entries are sampled whole; pool constraints are then applied to each unit.
+     *
+     * @throws EmptyPoolException
+     */
+    private function loadDriverPool(): void
+    {
+        if (!$this->driver instanceof CustomDriver) {
+            $this->setPool($this->driver->digest());
+
+            return;
+        }
+
+        $units = array_values(array_filter(
+            $this->driver->units(),
+            fn (string $unit): bool => array_all($this->poolConstraints, fn ($c) => $c->filter($unit) === $unit),
+        ));
+
+        $this->applyUnits($units);
+    }
+
+    /**
+     * @param  array<int, string>  $units
+     *
+     * @throws EmptyPoolException
+     */
+    private function applyUnits(array $units): void
+    {
+        $this->pool = implode('', $units);
+        $this->poolLength = count($units);
         $this->satisfiabilityChecked = false;
 
         if ($this->poolLength === 0) {
@@ -142,7 +185,7 @@ class Generator
         }
 
         // Pre-compute pool array and lookup metadata
-        $this->poolArray = str_split($this->pool);
+        $this->poolArray = $units;
         $this->sampleBytes = $this->poolLength <= 256 ? 1 : ($this->poolLength <= 65536 ? 2 : 4);
         $range = 256 ** $this->sampleBytes;
         $this->poolThreshold = $range - ($range % $this->poolLength);
@@ -192,7 +235,7 @@ class Generator
         $width = $this->sampleBytes;
         $requestSize = max(1, (int) ceil($length * (256 ** $width) / $threshold) + 8) * $width;
 
-        $result = str_repeat("\0", $length);
+        $result = [];
         $pos = 0;
 
         while ($pos < $length) {
@@ -210,7 +253,7 @@ class Generator
             }
         }
 
-        return $result;
+        return implode('', $result);
     }
 
     private function passesOutputConstraints(string $value): bool

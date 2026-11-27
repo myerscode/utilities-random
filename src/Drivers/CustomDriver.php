@@ -6,8 +6,12 @@ namespace Myerscode\Utilities\Random\Drivers;
 
 class CustomDriver extends AbstractDriver implements RandomDriverInterface
 {
+    /** @var array<int, string> */
+    private array $units = [];
+
     /**
-     * @param  array<int, string>  $characters  The character set to use
+     * @param  array<int, string>  $characters  The entries to use. Each entry is one unit, so
+     *                                          multibyte and multi-character entries are never split.
      */
     public function __construct(private readonly array $characters)
     {
@@ -16,18 +20,31 @@ class CustomDriver extends AbstractDriver implements RandomDriverInterface
 
     public function seed(): void
     {
-        $ranges = [];
+        $units = [];
 
         for ($i = 0; $i < 5; $i++) {
-            $ranges[] = implode('', array_map(strval(...), $this->shuffleArray($this->characters)));
+            foreach ($this->characters as $character) {
+                $units[] = (string) $character;
+            }
         }
 
-        $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
-
-        for ($i = 0; $i < $this->iterations; $i++) {
-            $seed = $this->shuffleString($seed);
+        // Fisher-Yates on whole entries; byte-level shuffles would corrupt multibyte entries.
+        for ($i = count($units) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$units[$i], $units[$j]] = [$units[$j], $units[$i]];
         }
 
-        $this->digest = $seed;
+        $this->units = $units;
+        $this->digest = implode('', $units);
+    }
+
+    /**
+     * The shuffled pool, one element per entry.
+     *
+     * @return array<int, string>
+     */
+    public function units(): array
+    {
+        return $this->units;
     }
 }
