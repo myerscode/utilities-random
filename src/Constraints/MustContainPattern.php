@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Myerscode\Utilities\Random\Constraints;
 
+use Myerscode\Utilities\Random\Exceptions\InvalidConstraintException;
+
 /**
  * Base class for constraints that require a minimum number of characters matching a regex pattern.
  */
 abstract class MustContainPattern implements OutputConstraint
 {
+    /**
+     * @throws InvalidConstraintException
+     */
     public function __construct(private readonly int $minimum = 1)
     {
+        if (@preg_match($this->pattern(), '') === false) {
+            throw new InvalidConstraintException(sprintf('Invalid regex pattern [%s]', $this->pattern()));
+        }
     }
 
     /**

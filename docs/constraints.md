@@ -171,3 +171,5 @@ $random = $utility
     ->constraints([new RegexConstraint('/^[a-zA-Z]/')])
     ->generate();
 ```
+
+An invalid pattern throws `InvalidConstraintException` when the constraint is constructed.
