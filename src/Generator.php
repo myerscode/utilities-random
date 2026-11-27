@@ -257,8 +257,27 @@ class Generator
         $pos = 0;
 
         while ($pos < $length) {
-            $values = unpack([1 => 'C*', 2 => 'n*', 4 => 'N*'][$width], random_bytes($requestSize));
+            $bytes = random_bytes($requestSize);
+
+            // One byte per sample: read bytes directly instead of allocating an unpack() array.
+            if ($width === 1) {
+                for ($i = 0, $n = strlen($bytes); $i < $n; $i++) {
+                    $value = ord($bytes[$i]);
+
+                    if ($value < $threshold) {
+                        $result[$pos++] = $poolArray[$value % $poolLength];
+
+                        if ($pos === $length) {
+                            break;
+                        }
+                    }
+                }
+
+                continue;
+            }
+
             /** @var array<int, int> $values */
+            $values = unpack($width === 2 ? 'n*' : 'N*', $bytes);
 
             foreach ($values as $value) {
                 if ($value < $threshold) {
