@@ -257,4 +257,47 @@ final class UtilityTest extends BaseTestSuite
             $utility->unique();
         }
     }
+
+    public function testUniqueReturnsEveryValueInSmallSpaceThenThrows(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        $values = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $values[] = $utility->unique();
+        }
+
+        $this->assertCount(10, array_unique($values));
+
+        $this->expectException(UniqueThresholdReachedException::class);
+        $utility->unique();
+    }
+
+    public function testUniqueNeverReturnsValueProducedByGenerate(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        $generated = $utility->generate();
+
+        for ($i = 0; $i < 9; $i++) {
+            $this->assertNotSame($generated, $utility->unique());
+        }
+    }
+
+    public function testResetForgetsGeneratedValues(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        for ($i = 0; $i < 10; $i++) {
+            $utility->unique();
+        }
+
+        $utility->reset();
+
+        $this->assertSame(1, strlen($utility->unique()));
+    }
 }

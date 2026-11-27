@@ -39,7 +39,9 @@ $first  = $utility->length(10)->unique();
 $second = $utility->length(10)->unique(); // guaranteed different from $first
 ```
 
-Throws `UniqueThresholdReachedException` if it can't produce a unique value after 10 attempts.
+Values returned by `generate()` are recorded too, so `unique()` never returns one that `generate()` already produced. Lookups use a hash set, so history size does not slow `unique()` down.
+
+Throws `UniqueThresholdReachedException` if it can't find a new value within a bounded number of attempts. The limit scales with how full the space is (see `permutations()`), so a nearly exhausted space gets more attempts and a fully used one throws after a bounded number of tries. Output constraints can shrink the usable space below `permutations()`, in which case it throws once the free values are hard to hit.
 
 ## Applying Constraints
 
