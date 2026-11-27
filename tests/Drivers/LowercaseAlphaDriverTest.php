@@ -28,16 +28,6 @@ final class LowercaseAlphaDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[a-z]+$/', $seed);
     }
 
-    public function testSeedRegeneratesDigest(): void
-    {
-        $first = $this->lowercaseAlphaDriver->digest();
-        $this->lowercaseAlphaDriver->seed();
-        $second = $this->lowercaseAlphaDriver->digest();
-
-        $this->assertSame(strlen($first), strlen($second));
-        $this->assertMatchesRegularExpression('/^[a-z]+$/', $second);
-    }
-
     public function testDigestHasExpectedCharacterMultiset(): void
     {
         $expected = str_split(str_repeat(implode('', range('a', 'z')), 2));
@@ -46,5 +36,15 @@ final class LowercaseAlphaDriverTest extends BaseTestSuite
         sort($actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->lowercaseAlphaDriver->digest();
+        $this->lowercaseAlphaDriver->seed();
+        $second = $this->lowercaseAlphaDriver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^[a-z]+$/', $second);
     }
 }

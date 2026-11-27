@@ -28,16 +28,6 @@ final class NumericDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^\d+$/', $seed);
     }
 
-    public function testSeedRegeneratesDigest(): void
-    {
-        $first = $this->numericDriver->digest();
-        $this->numericDriver->seed();
-        $second = $this->numericDriver->digest();
-
-        $this->assertSame(strlen($first), strlen($second));
-        $this->assertMatchesRegularExpression('/^\d+$/', $second);
-    }
-
     public function testDigestHasExpectedCharacterMultiset(): void
     {
         $expected = str_split(str_repeat(implode('', range(0, 9)), 5));
@@ -46,5 +36,15 @@ final class NumericDriverTest extends BaseTestSuite
         sort($actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->numericDriver->digest();
+        $this->numericDriver->seed();
+        $second = $this->numericDriver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^\d+$/', $second);
     }
 }

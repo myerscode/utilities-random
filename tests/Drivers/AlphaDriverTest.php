@@ -28,16 +28,6 @@ final class AlphaDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[a-zA-Z]+$/', $seed);
     }
 
-    public function testSeedRegeneratesDigest(): void
-    {
-        $first = $this->alphaDriver->digest();
-        $this->alphaDriver->seed();
-        $second = $this->alphaDriver->digest();
-
-        $this->assertSame(strlen($first), strlen($second));
-        $this->assertMatchesRegularExpression('/^[a-zA-Z]+$/', $second);
-    }
-
     public function testDigestHasExpectedCharacterMultiset(): void
     {
         $expected = str_split(implode('', range('a', 'z')) . implode('', range('A', 'Z')));
@@ -46,5 +36,15 @@ final class AlphaDriverTest extends BaseTestSuite
         sort($actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->alphaDriver->digest();
+        $this->alphaDriver->seed();
+        $second = $this->alphaDriver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^[a-zA-Z]+$/', $second);
     }
 }

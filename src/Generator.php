@@ -64,24 +64,6 @@ class Generator
     }
 
     /**
-     * Number of distinct characters in the current pool.
-     */
-    public function uniquePoolSize(): int
-    {
-        return count(array_unique($this->poolArray));
-    }
-
-    /**
-     * Reload the pool from the driver, e.g. after the driver was re-seeded.
-     *
-     * @throws EmptyPoolException
-     */
-    public function refresh(): void
-    {
-        $this->loadDriverPool();
-    }
-
-    /**
      * @throws ValidationThresholdReachedException
      * @throws UnsatisfiableConstraintException
      */
@@ -123,6 +105,16 @@ class Generator
     }
 
     /**
+     * Reload the pool from the driver, e.g. after the driver was re-seeded.
+     *
+     * @throws EmptyPoolException
+     */
+    public function refresh(): void
+    {
+        $this->loadDriverPool();
+    }
+
+    /**
      * @param  array<int, ConstraintInterface>  $constraints
      *
      * @throws EmptyPoolException
@@ -154,35 +146,20 @@ class Generator
     }
 
     /**
-     * Split a pool into characters. UTF-8 pools are split by code point, anything else by byte.
-     *
-     * @return array<int, string>
+     * Number of distinct characters in the current pool.
      */
-    private function splitUnits(string $pool): array
+    public function uniquePoolSize(): int
     {
-        return $pool !== '' && mb_check_encoding($pool, 'UTF-8') ? mb_str_split($pool) : str_split($pool);
+        return count(array_unique($this->poolArray));
     }
 
-    /**
-     * Load the driver's pool. A CustomDriver exposes its entries as units so multi-character
-     * entries are sampled whole; pool constraints are then applied to each unit.
-     *
-     * @throws EmptyPoolException
-     */
-    private function loadDriverPool(): void
+    private function applyPoolConstraints(string $pool): string
     {
-        if (!$this->driver instanceof CustomDriver) {
-            $this->setPool($this->driver->digest());
-
-            return;
+        foreach ($this->poolConstraints as $poolConstraint) {
+            $pool = $poolConstraint->filter($pool);
         }
 
-        $units = array_values(array_filter(
-            $this->driver->units(),
-            fn (string $unit): bool => array_all($this->poolConstraints, fn ($c) => $c->filter($unit) === $unit),
-        ));
-
-        $this->applyUnits($units);
+        return $pool;
     }
 
     /**
@@ -207,15 +184,6 @@ class Generator
         $this->sampleBytes = $this->poolLength <= 256 ? 1 : ($this->poolLength <= 65536 ? 2 : 4);
         $range = 256 ** $this->sampleBytes;
         $this->poolThreshold = $range - ($range % $this->poolLength);
-    }
-
-    private function applyPoolConstraints(string $pool): string
-    {
-        foreach ($this->poolConstraints as $poolConstraint) {
-            $pool = $poolConstraint->filter($pool);
-        }
-
-        return $pool;
     }
 
     /**
@@ -293,9 +261,41 @@ class Generator
         return implode('', $result);
     }
 
+    /**
+     * Load the driver's pool. A CustomDriver exposes its entries as units so multi-character
+     * entries are sampled whole; pool constraints are then applied to each unit.
+     *
+     * @throws EmptyPoolException
+     */
+    private function loadDriverPool(): void
+    {
+        if (!$this->driver instanceof CustomDriver) {
+            $this->setPool($this->driver->digest());
+
+            return;
+        }
+
+        $units = array_values(array_filter(
+            $this->driver->units(),
+            fn (string $unit): bool => array_all($this->poolConstraints, fn ($c) => $c->filter($unit) === $unit),
+        ));
+
+        $this->applyUnits($units);
+    }
+
     private function passesOutputConstraints(string $value): bool
     {
         return array_all($this->outputConstraints, fn ($constraint) => $constraint->passes($value));
+    }
+
+    /**
+     * Split a pool into characters. UTF-8 pools are split by code point, anything else by byte.
+     *
+     * @return array<int, string>
+     */
+    private function splitUnits(string $pool): array
+    {
+        return $pool !== '' && mb_check_encoding($pool, 'UTF-8') ? mb_str_split($pool) : str_split($pool);
     }
 
     /**

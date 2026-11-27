@@ -28,16 +28,6 @@ final class BinaryDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[01]+$/', $seed);
     }
 
-    public function testSeedRegeneratesDigest(): void
-    {
-        $first = $this->binaryDriver->digest();
-        $this->binaryDriver->seed();
-        $second = $this->binaryDriver->digest();
-
-        $this->assertSame(strlen($first), strlen($second));
-        $this->assertMatchesRegularExpression('/^[01]+$/', $second);
-    }
-
     public function testDigestHasExpectedCharacterMultiset(): void
     {
         $expected = str_split(str_repeat('01', 25));
@@ -46,5 +36,15 @@ final class BinaryDriverTest extends BaseTestSuite
         sort($actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->binaryDriver->digest();
+        $this->binaryDriver->seed();
+        $second = $this->binaryDriver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^[01]+$/', $second);
     }
 }

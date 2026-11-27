@@ -28,16 +28,6 @@ final class HexDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $seed);
     }
 
-    public function testSeedRegeneratesDigest(): void
-    {
-        $first = $this->hexDriver->digest();
-        $this->hexDriver->seed();
-        $second = $this->hexDriver->digest();
-
-        $this->assertSame(strlen($first), strlen($second));
-        $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $second);
-    }
-
     public function testDigestHasExpectedCharacterMultiset(): void
     {
         $expected = str_split(implode('', range(0, 9)) . implode('', range('a', 'f')));
@@ -46,5 +36,15 @@ final class HexDriverTest extends BaseTestSuite
         sort($actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSeedRegeneratesDigest(): void
+    {
+        $first = $this->hexDriver->digest();
+        $this->hexDriver->seed();
+        $second = $this->hexDriver->digest();
+
+        $this->assertSame(strlen($first), strlen($second));
+        $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $second);
     }
 }
