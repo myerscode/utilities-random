@@ -251,7 +251,7 @@ class Generator
 
         // Over-request to cover expected rejections in one pass
         $width = $this->sampleBytes;
-        $requestSize = max(1, (int) ceil($length * (256 ** $width) / $threshold) + 8) * $width;
+        $requestSize = max(1, ((int) ceil($length * (256 ** $width) / $threshold) + 8) * $width);
 
         $result = [];
         $pos = 0;
