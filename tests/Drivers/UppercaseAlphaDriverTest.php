@@ -28,6 +28,16 @@ final class UppercaseAlphaDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[A-Z]+$/', $seed);
     }
 
+    public function testDigestHasExpectedCharacterMultiset(): void
+    {
+        $expected = str_split(str_repeat(implode('', range('A', 'Z')), 2));
+        $actual = str_split($this->uppercaseAlphaDriver->digest());
+        sort($expected);
+        sort($actual);
+
+        $this->assertSame($expected, $actual);
+    }
+
     public function testSeedRegeneratesDigest(): void
     {
         $first = $this->uppercaseAlphaDriver->digest();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Constraints\Output;
 
 use Myerscode\Utilities\Random\Constraints\Output\RegexConstraint;
+use Myerscode\Utilities\Random\Exceptions\InvalidConstraintException;
 use Tests\BaseTestSuite;
 
 final class RegexConstraintTest extends BaseTestSuite
@@ -25,6 +26,13 @@ final class RegexConstraintTest extends BaseTestSuite
     {
         $regexConstraint = new RegexConstraint('/^.*$/');
         $this->assertTrue($regexConstraint->passes(''));
+    }
+    public function testThrowsWhenPatternIsInvalid(): void
+    {
+        $this->expectException(InvalidConstraintException::class);
+        $this->expectExceptionMessage('Invalid regex pattern [/(unclosed/]');
+
+        new RegexConstraint('/(unclosed/');
     }
 
     public function testWorksWithDigitPattern(): void

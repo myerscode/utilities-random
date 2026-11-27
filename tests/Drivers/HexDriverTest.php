@@ -28,6 +28,16 @@ final class HexDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $seed);
     }
 
+    public function testDigestHasExpectedCharacterMultiset(): void
+    {
+        $expected = str_split(implode('', range(0, 9)) . implode('', range('a', 'f')));
+        $actual = str_split($this->hexDriver->digest());
+        sort($expected);
+        sort($actual);
+
+        $this->assertSame($expected, $actual);
+    }
+
     public function testSeedRegeneratesDigest(): void
     {
         $first = $this->hexDriver->digest();

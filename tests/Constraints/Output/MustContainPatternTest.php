@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Constraints\Output;
 
+use Myerscode\Utilities\Random\Constraints\MustContainPattern;
+use Myerscode\Utilities\Random\Exceptions\InvalidConstraintException;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainDigit;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainLetter;
 use Myerscode\Utilities\Random\Constraints\Output\MustContainUppercase;
@@ -46,5 +48,22 @@ final class MustContainPatternTest extends BaseTestSuite
         $mustContainUppercase = new MustContainUppercase();
         $this->assertTrue($mustContainUppercase->canBeSatisfiedBy('abcA', 5));
         $this->assertFalse($mustContainUppercase->canBeSatisfiedBy('abcdef', 5));
+    }
+    public function testThrowsWhenPatternIsInvalid(): void
+    {
+        $this->expectException(InvalidConstraintException::class);
+        $this->expectExceptionMessage('Invalid regex pattern [/(unclosed/]');
+
+        new class () extends MustContainPattern {
+            protected function pattern(): string
+            {
+                return '/(unclosed/';
+            }
+
+            public function __toString(): string
+            {
+                return 'invalid';
+            }
+        };
     }
 }

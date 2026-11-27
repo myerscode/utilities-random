@@ -37,6 +37,16 @@ final class GeneratorTest extends BaseTestSuite
         yield 'three chunks with space' => [2, 3, ' ', 8];
     }
 
+    /**
+     * @return Iterator<string, array{int}>
+     */
+    public static function poolSizeProvider(): Iterator
+    {
+        yield 'one byte per sample' => [200];
+        yield 'two bytes per sample' => [300];
+        yield 'four bytes per sample' => [70000];
+    }
+
     public function testGetConstraintsReturnsSetConstraints(): void
     {
         $constraints = [new ExcludeSimilarCharacters(), new NoRepeatingCharacters()];
@@ -63,6 +73,18 @@ final class GeneratorTest extends BaseTestSuite
     {
         $result = $this->generator->make(8);
         $this->assertSame(8, strlen($result));
+    }
+
+    #[DataProvider('poolSizeProvider')]
+    public function testMakeSamplesFromPoolsOfAnySize(int $size): void
+    {
+        $chars = array_map(mb_chr(...), range(0x20000, 0x20000 + $size - 1));
+        $this->generator->setPool(implode('', $chars));
+
+        $result = $this->generator->make(50);
+
+        $this->assertSame(50, mb_strlen($result));
+        $this->assertSame([], array_diff(mb_str_split($result), $chars));
     }
 
     public function testMakeThrowsForMustContainDigitWithAlphaPool(): void

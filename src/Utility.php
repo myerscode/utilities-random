@@ -12,11 +12,13 @@ use Myerscode\Utilities\Random\Exceptions\UniqueThresholdReachedException;
 
 class Utility
 {
+    private const int MAX_UNIQUE_ATTEMPTS = 1_000_000;
+
     private int $chunks = 0;
 
     private int $collisions = 0;
 
-    /** @var array<int, string> */
+    /** @var array<int|string, true> Hash set of produced values, keyed by value for O(1) lookup. */
     private array $generated = [];
 
     private readonly Generator $generator;
@@ -26,8 +28,6 @@ class Utility
     private readonly RandomDriverInterface $randomDriver;
 
     private string $spacer = '-';
-
-    private int $uniqueCollisionThreshold = 10;
 
     /**
      * @throws InvalidProviderException
@@ -99,7 +99,7 @@ class Utility
     public function generate(): string
     {
         $random = $this->make();
-        $this->generated[] = $random;
+        $this->generated[$random] = true;
 
         return $random;
     }
@@ -111,9 +111,14 @@ class Utility
         return $this;
     }
 
-    public function permutations(): int
+    /**
+     * Number of distinct strings that can be generated: unique pool characters
+     * raised to the total output length (length x chunks, spacers excluded).
+     * Returns a float once the value exceeds PHP_INT_MAX.
+     */
+    public function permutations(): int|float
     {
-        return strlen($this->randomDriver->digest()) ** $this->length;
+        return $this->generator->uniquePoolSize() ** ($this->length * max(1, $this->chunks));
     }
 
     public function reset(): static
@@ -124,9 +129,14 @@ class Utility
         return $this;
     }
 
+    /**
+     * Re-seed the driver and reload the generator's pool from it. The pool's characters stay the
+     * same; output randomness comes from random_bytes() at generation time, not from pool order.
+     */
     public function seed(): void
     {
         $this->randomDriver->seed();
+        $this->generator->refresh();
     }
 
     public function spacer(string $spacer): static
@@ -137,15 +147,24 @@ class Utility
     }
 
     /**
+     * Generate a value this utility has not produced before (via generate() or unique()) since
+     * the last reset(). Gives up after a bounded number of attempts that scales with how full
+     * the permutation space is, so an exhausted space throws instead of looping.
+     *
      * @throws UniqueThresholdReachedException
      */
     public function unique(): string
     {
-        for ($i = 0; $i < $this->uniqueCollisionThreshold; $i++) {
+        $space = $this->permutations();
+        $remaining = max(1, $space - count($this->generated));
+        // 20 x the expected attempts to hit a free value: a miss on a free slot is about e^-20.
+        $attempts = is_finite($space) ? (int) min(self::MAX_UNIQUE_ATTEMPTS, max(20, ceil(20 * $space / $remaining))) : 20;
+
+        for ($i = 0; $i < $attempts; $i++) {
             $random = $this->make();
 
-            if (!in_array($random, $this->generated, true)) {
-                $this->generated[] = $random;
+            if (!isset($this->generated[$random])) {
+                $this->generated[$random] = true;
 
                 return $random;
             }
@@ -154,7 +173,7 @@ class Utility
         }
 
         throw new UniqueThresholdReachedException(
-            sprintf('Maximum attempts (%s) at creating a new unique value reached', $this->uniqueCollisionThreshold),
+            sprintf('Maximum attempts (%s) at creating a new unique value reached', $attempts),
         );
     }
 

@@ -39,7 +39,9 @@ $first  = $utility->length(10)->unique();
 $second = $utility->length(10)->unique(); // guaranteed different from $first
 ```
 
-Throws `UniqueThresholdReachedException` if it can't produce a unique value after 10 attempts.
+Values returned by `generate()` are recorded too, so `unique()` never returns one that `generate()` already produced. Lookups use a hash set, so history size does not slow `unique()` down.
+
+Throws `UniqueThresholdReachedException` if it can't find a new value within a bounded number of attempts. The limit scales with how full the space is (see `permutations()`), so a nearly exhausted space gets more attempts and a fully used one throws after a bounded number of tries. Output constraints can shrink the usable space below `permutations()`, in which case it throws once the free values are hard to hit.
 
 ## Applying Constraints
 
@@ -59,7 +61,16 @@ $random = $utility
 
 | Method | Description |
 |--------|-------------|
-| `seed()` | Re-seed the driver to regenerate the character pool |
+| `seed()` | Re-seed the driver and reload the pool. Only reshuffles the pool order; it does not affect output randomness, which comes from `random_bytes()` at generation time |
 | `collisions()` | Number of collisions encountered during `unique()` calls |
 | `reset()` | Clear generated history and collision count |
-| `permutations()` | Total possible permutations for the current pool and length |
+| `permutations()` | Distinct strings possible: unique pool characters (after constraints) ^ (length × chunks). Returns `int`, or `float` when the result exceeds `PHP_INT_MAX`. Ignores output constraints and spacers |
+
+## Randomness
+
+Characters are chosen with `random_bytes()` (the operating system's CSPRNG). Bytes that would cause modulo bias are rejected, so every pool entry is equally likely at each position. Two things change that:
+
+- Duplicate entries in a [`CustomDriver`](drivers.md#customdriver) weight sampling towards those entries.
+- Output constraints work by regenerating until a value passes, so they exclude some strings and shift the distribution of what is left.
+
+`unique()` only guarantees uniqueness within the utility instance (until `reset()`). The library has not been independently audited. Check it against your own security requirements before using it for secrets.

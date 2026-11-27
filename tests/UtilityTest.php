@@ -200,7 +200,7 @@ final class UtilityTest extends BaseTestSuite
     {
         $utility = new Utility(NumericDriver::class);
         $utility->length(3);
-        $this->assertSame(50 ** 3, $utility->permutations());
+        $this->assertSame(10 ** 3, $utility->permutations());
     }
 
     public function testResetClearsState(): void
@@ -211,6 +211,20 @@ final class UtilityTest extends BaseTestSuite
         $utility->reset();
 
         $this->assertSame(0, $utility->collisions());
+    }
+
+    public function testResetForgetsGeneratedValues(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        for ($i = 0; $i < 10; $i++) {
+            $utility->unique();
+        }
+
+        $utility->reset();
+
+        $this->assertSame(1, strlen($utility->unique()));
     }
 
     public function testResetReturnsSelf(): void
@@ -235,6 +249,18 @@ final class UtilityTest extends BaseTestSuite
         $this->assertStringContainsString('_', $result);
     }
 
+    public function testUniqueNeverReturnsValueProducedByGenerate(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        $generated = $utility->generate();
+
+        for ($i = 0; $i < 9; $i++) {
+            $this->assertNotSame($generated, $utility->unique());
+        }
+    }
+
     public function testUniqueReturnsDistinctValues(): void
     {
         $utility = new Utility(AlphaNumericDriver::class);
@@ -244,6 +270,23 @@ final class UtilityTest extends BaseTestSuite
         $second = $utility->unique();
 
         $this->assertNotSame($first, $second);
+    }
+
+    public function testUniqueReturnsEveryValueInSmallSpaceThenThrows(): void
+    {
+        $utility = new Utility(NumericDriver::class);
+        $utility->length(1);
+
+        $values = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $values[] = $utility->unique();
+        }
+
+        $this->assertCount(10, array_unique($values));
+
+        $this->expectException(UniqueThresholdReachedException::class);
+        $utility->unique();
     }
 
     public function testUniqueThrowsWhenThresholdReached(): void

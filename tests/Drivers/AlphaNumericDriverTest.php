@@ -28,6 +28,16 @@ final class AlphaNumericDriverTest extends BaseTestSuite
         $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]+$/', $seed);
     }
 
+    public function testDigestHasExpectedCharacterMultiset(): void
+    {
+        $expected = str_split(implode('', range('a', 'z')) . implode('', range('A', 'Z')) . implode('', range(0, 9)));
+        $actual = str_split($this->alphaNumericDriver->digest());
+        sort($expected);
+        sort($actual);
+
+        $this->assertSame($expected, $actual);
+    }
+
     public function testSeedRegeneratesDigest(): void
     {
         $first = $this->alphaNumericDriver->digest();
