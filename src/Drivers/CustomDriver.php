@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Myerscode\Utilities\Random\Drivers;
 
+/**
+ * Note: duplicate entries are kept, not removed. An entry listed twice is twice as
+ * likely to be sampled, so pass a unique set if you want uniform output.
+ */
 class CustomDriver extends AbstractDriver implements RandomDriverInterface
 {
     /** @var array<int, string> */
