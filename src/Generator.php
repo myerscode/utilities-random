@@ -33,6 +33,9 @@ class Generator
      */
     private int $poolThreshold = 256;
 
+    /** Bytes consumed per sample: 1, 2 or 4, so pools longer than 256 chars still sample uniformly. */
+    private int $sampleBytes = 1;
+
     /**
      * Whether the satisfiability check has passed for the current pool/constraints.
      * Reset to false whenever pool or constraints change.
@@ -140,7 +143,9 @@ class Generator
 
         // Pre-compute pool array and lookup metadata
         $this->poolArray = str_split($this->pool);
-        $this->poolThreshold = 256 - (256 % $this->poolLength);
+        $this->sampleBytes = $this->poolLength <= 256 ? 1 : ($this->poolLength <= 65536 ? 2 : 4);
+        $range = 256 ** $this->sampleBytes;
+        $this->poolThreshold = $range - ($range % $this->poolLength);
     }
 
     private function applyPoolConstraints(string $pool): string
@@ -184,13 +189,14 @@ class Generator
         $threshold = $this->poolThreshold;
 
         // Over-request to cover expected rejections in one pass
-        $requestSize = max(1, (int) ceil($length * 256 / $threshold) + 8);
+        $width = $this->sampleBytes;
+        $requestSize = max(1, (int) ceil($length * (256 ** $width) / $threshold) + 8) * $width;
 
         $result = str_repeat("\0", $length);
         $pos = 0;
 
         while ($pos < $length) {
-            $values = unpack('C*', random_bytes($requestSize));
+            $values = unpack([1 => 'C*', 2 => 'n*', 4 => 'N*'][$width], random_bytes($requestSize));
             /** @var array<int, int> $values */
 
             foreach ($values as $value) {
