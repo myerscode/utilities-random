@@ -97,7 +97,7 @@ $utility->constraints([new ExcludeCharacters(['0','1','2','3','4','5','6','7','8
 // throws EmptyPoolException
 ```
 
-The `canBeSatisfiedBy` check also considers the requested output length. For instance, `NoRepeatingCharacters` with a single-character pool is fine for length 1, but impossible for length 2+.
+The `canBeSatisfiedBy` check also considers the requested output length. For instance, `MustContainDigit(5)` with length 4 throws `UnsatisfiableConstraintException` immediately, and `NoRepeatingCharacters` with a single-character pool is fine for length 1, but impossible for length 2+.
 
 When creating custom output constraints, implement `canBeSatisfiedBy(string $pool, int $length): bool` to opt into this check. Return `true` if you can't predict satisfiability from the pool alone.
 

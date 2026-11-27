@@ -29,13 +29,13 @@ abstract class MustContainPattern implements OutputConstraint
     abstract protected function pattern(): string;
 
     /**
-     * Check the pool contains at least one character matching the pattern.
-     * If the pool has no matching characters, this constraint can never pass
+     * Check the pool contains at least one character matching the pattern and the
+     * minimum fits in the requested length. Otherwise this constraint can never pass
      * regardless of how many times we retry generation.
      */
     public function canBeSatisfiedBy(string $pool, int $length): bool
     {
-        return (bool) preg_match($this->pattern(), $pool);
+        return $this->minimum <= $length && preg_match($this->pattern(), $pool) === 1;
     }
 
     /**
