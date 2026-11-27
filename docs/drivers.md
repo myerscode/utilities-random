@@ -1,6 +1,6 @@
 # Drivers
 
-Drivers define the character pool used for random string generation. Each driver produces a shuffled digest of characters that the generator picks from.
+Drivers define the character pool used for random string generation. Each driver produces a digest: the characters the generator picks from. Pool order does not affect randomness, because the generator samples positions with `random_bytes()`. Only which characters are in the pool, and how often, matters. Pools of any size are supported (the generator reads 1, 2 or 4 bytes per sample as needed).
 
 ## Built-in Drivers
 
@@ -54,7 +54,7 @@ Note: since `CustomDriver` requires constructor arguments, pass an instance rath
 
 ## Creating Your Own Driver
 
-Implement `RandomDriverInterface` (or extend `AbstractDriver` for the shuffle helpers):
+Implement `RandomDriverInterface` (or extend `AbstractDriver`, which stores the digest for you). `seed()` only needs to set `$this->digest` to the characters you want in the pool; no shuffling is required:
 
 ```php
 use Myerscode\Utilities\Random\Drivers\AbstractDriver;
@@ -64,19 +64,7 @@ class OctalDriver extends AbstractDriver implements RandomDriverInterface
 {
     public function seed(): void
     {
-        $ranges = [];
-
-        for ($i = 0; $i < 5; $i++) {
-            $ranges[] = implode('', array_map(strval(...), $this->shuffleArray(range(0, 7))));
-        }
-
-        $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
-
-        for ($i = 0; $i < $this->iterations; $i++) {
-            $seed = $this->shuffleString($seed);
-        }
-
-        $this->digest = $seed;
+        $this->digest = implode('', range(0, 7));
     }
 }
 ```

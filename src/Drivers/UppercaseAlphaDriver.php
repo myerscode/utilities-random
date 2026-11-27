@@ -8,17 +8,6 @@ class UppercaseAlphaDriver extends AbstractDriver implements RandomDriverInterfa
 {
     public function seed(): void
     {
-        $ranges = [
-            implode('', array_map(strval(...), $this->shuffleArray(range('A', 'Z')))),
-            implode('', array_map(strval(...), $this->shuffleArray(range('A', 'Z')))),
-        ];
-
-        $seed = $this->shuffleString(str_shuffle(implode('', $ranges)));
-
-        for ($i = 0; $i < $this->iterations; $i++) {
-            $seed = $this->shuffleString($seed);
-        }
-
-        $this->digest = $seed;
+        $this->digest = str_repeat(implode('', range('A', 'Z')), 2);
     }
 }

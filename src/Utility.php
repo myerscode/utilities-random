@@ -130,8 +130,8 @@ class Utility
     }
 
     /**
-     * Re-seed the driver and reload the generator's pool from it. This only reshuffles the
-     * pool order; output randomness comes from random_bytes() at generation time.
+     * Re-seed the driver and reload the generator's pool from it. The pool's characters stay the
+     * same; output randomness comes from random_bytes() at generation time, not from pool order.
      */
     public function seed(): void
     {
