@@ -26,6 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Standardise CI workflows (tests, codecov, security audit)
 - Standardise dev tooling (Pint PSR-12, PHPStan level max, Rector prepared sets)
 - Achieve 100% test coverage
+- `unique()` uses a hash set and an attempt limit that scales with the remaining space; `generate()` values are now recorded so `unique()` never repeats them
+- Built-in drivers build their pools directly instead of shuffling 5000 times (same characters); removed `AbstractDriver::shuffleArray()`, `shuffleString()` and `$iterations`
+- `permutations()` counts unique pool characters
 
 ### Removed
 - Legacy php.yml workflow (replaced by tests.yml)
