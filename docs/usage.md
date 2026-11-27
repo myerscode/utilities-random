@@ -59,7 +59,16 @@ $random = $utility
 
 | Method | Description |
 |--------|-------------|
-| `seed()` | Re-seed the driver to regenerate the character pool |
+| `seed()` | Re-seed the driver and reload the pool. Only reshuffles the pool order; it does not affect output randomness, which comes from `random_bytes()` at generation time |
 | `collisions()` | Number of collisions encountered during `unique()` calls |
 | `reset()` | Clear generated history and collision count |
-| `permutations()` | Total possible permutations for the current pool and length |
+| `permutations()` | Distinct strings possible: unique pool characters (after constraints) ^ (length × chunks). Returns `int`, or `float` when the result exceeds `PHP_INT_MAX`. Ignores output constraints and spacers |
+
+## Randomness
+
+Characters are chosen with `random_bytes()` (the operating system's CSPRNG). Bytes that would cause modulo bias are rejected, so every pool entry is equally likely at each position. Two things change that:
+
+- Duplicate entries in a [`CustomDriver`](drivers.md#customdriver) weight sampling towards those entries.
+- Output constraints work by regenerating until a value passes, so they exclude some strings and shift the distribution of what is left.
+
+`unique()` only guarantees uniqueness within the utility instance (until `reset()`). The library has not been independently audited. Check it against your own security requirements before using it for secrets.

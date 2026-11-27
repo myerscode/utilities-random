@@ -111,9 +111,14 @@ class Utility
         return $this;
     }
 
-    public function permutations(): int
+    /**
+     * Number of distinct strings that can be generated: unique pool characters
+     * raised to the total output length (length x chunks, spacers excluded).
+     * Returns a float once the value exceeds PHP_INT_MAX.
+     */
+    public function permutations(): int|float
     {
-        return strlen($this->randomDriver->digest()) ** $this->length;
+        return $this->generator->uniquePoolSize() ** ($this->length * max(1, $this->chunks));
     }
 
     public function reset(): static
@@ -124,9 +129,14 @@ class Utility
         return $this;
     }
 
+    /**
+     * Re-seed the driver and reload the generator's pool from it. This only reshuffles the
+     * pool order; output randomness comes from random_bytes() at generation time.
+     */
     public function seed(): void
     {
         $this->randomDriver->seed();
+        $this->generator->refresh();
     }
 
     public function spacer(string $spacer): static

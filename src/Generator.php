@@ -64,6 +64,24 @@ class Generator
     }
 
     /**
+     * Number of distinct characters in the current pool.
+     */
+    public function uniquePoolSize(): int
+    {
+        return count(array_unique($this->poolArray));
+    }
+
+    /**
+     * Reload the pool from the driver, e.g. after the driver was re-seeded.
+     *
+     * @throws EmptyPoolException
+     */
+    public function refresh(): void
+    {
+        $this->loadDriverPool();
+    }
+
+    /**
      * @throws ValidationThresholdReachedException
      * @throws UnsatisfiableConstraintException
      */
