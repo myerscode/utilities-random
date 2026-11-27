@@ -200,7 +200,7 @@ final class UtilityTest extends BaseTestSuite
     {
         $utility = new Utility(NumericDriver::class);
         $utility->length(3);
-        $this->assertSame(50 ** 3, $utility->permutations());
+        $this->assertSame(10 ** 3, $utility->permutations());
     }
 
     public function testResetClearsState(): void
